@@ -32,7 +32,7 @@ jobs:
           cache-name: cache-node-modules-api
         with:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('api2/package-lock.json') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('api/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
@@ -40,7 +40,7 @@ jobs:
 
       - name: Build and deploy
         env:
-          GCP_RUN_SERVICE_NAME: "staging"
+          GCP_RUN_SERVICE_NAME: "staging-api"
         run: |
           cd api
           yarn install --frozen-lockfile
