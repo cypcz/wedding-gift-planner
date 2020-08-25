@@ -1,0 +1,65 @@
+name: STAGING - Build and Deploy API
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - api/**
+      - .github
+env:
+  GCP_PROJECT: "wedding-gift-planner"
+
+jobs:
+  deploy:
+    name: Build and Deploy Staging Prisma API
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: "286.0.0"
+          service_account_email: ${{ secrets.GCP_STAGING_SA_EMAIL }}
+          service_account_key: ${{ secrets.GCP_STAGING_SA_KEY }}
+          export_default_credentials: true
+          project_id: ${{ env.GCP_PROJECT }}
+
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules-api
+        with:
+          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('api2/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Build and deploy
+        env:
+          GCP_RUN_SERVICE_NAME: "staging"
+        run: |
+          cd api
+          yarn install --frozen-lockfile
+          # Build GCR image
+          export TAG="gcr.io/wedding-gift-planner/api:${GITHUB_SHA::8}"
+          gcloud builds submit \
+            --tag $TAG \
+            --project $GCP_PROJECT
+          # Run cloud_sql_proxy
+          # wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+          # chmod +x cloud_sql_proxy
+          # ./cloud_sql_proxy -instances=crave-staging:us-central1:crave-staging:prisma=tcp:5432 &
+          # Run migrations
+          # export DATABASE_URL="postgresql://prisma:${{ secrets.STAGING_DATABASE_PASSWORD }}@localhost/prisma?schema=public"
+          # npm run prisma:migrate:up
+          # Deploy GCR service
+          gcloud run deploy $GCP_RUN_SERVICE_NAME \
+            --image $TAG \
+            --platform managed \
+            --region europe-west4 \
+            --allow-unauthenticated \
+            --project $GCP_PROJECT
