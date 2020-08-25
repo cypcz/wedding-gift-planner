@@ -13,20 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js
-        uses: actions/setup-node@v1
+      - uses: amondnet/vercel-action@v19
         with:
-          node-version: "12.x"
-      - name: Install dependencies
-        run: yarn
-      - uses: actions/vercel-deployment@0.5.1
-        with:
-          vercelToken: ${{ secrets.VERCEL_TOKEN }}
-          vercelOrgId: ${{ secrets.VERCEL_ORG_ID }}
-          vercelProjectId: ${{ secrets.VERCEL_PROJECT_ID }}
-          githubToken: ${{ secrets.GH_TOKEN }}
-          #sourceDirectory: "web"
-          #assignDomain: "preview.example.com"
-        env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-          NEXT_PUBLIC_STAGE: ${{ secrets.NEXT_PUBLIC_STAGE }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          #github-token: ${{ secrets.GH_TOKEN }} #Optional
+          #vercel-args: '--prod' #Optional
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID}} #Required
+          working-directory: ./web
