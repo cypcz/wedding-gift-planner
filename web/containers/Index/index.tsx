@@ -77,7 +77,7 @@ const Index = () => {
           <button onClick={handleLogout}>logout</button>
         )}
       </main>
-      <footer>footerrr</footer>
+      <footer>footerrrxxx</footer>
     </>
   );
 };
