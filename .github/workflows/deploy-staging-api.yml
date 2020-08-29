@@ -7,7 +7,6 @@ on:
       - web/**
       - .github/workflows/deploy-staging-web.yml
 env:
-  PROJECT_ID: wedding-gift-planner
   RUN_REGION: europe-west4
   SERVICE_NAME: staging-api
 jobs:
@@ -22,14 +21,14 @@ jobs:
         with:
           version: "290.0.1"
           service_account_key: ${{ secrets.RUN_SA_KEY }}
-          project_id: $PROJECT_ID
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
           export_default_credentials: true
       # Build and push image to Google Container Registry
       - name: Build
         run: |-
           gcloud builds submit \
             --quiet \
-            --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+            --tag "gcr.io/${{ secrets.GCP_PROJECT_ID }}/$SERVICE_NAME:$GITHUB_SHA" \
             api
       # Deploy image to Cloud Run
       - name: Deploy
@@ -37,6 +36,6 @@ jobs:
           gcloud run deploy "$SERVICE_NAME" \
             --quiet \
             --region "$RUN_REGION" \
-            --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+            --image "gcr.io/${{ secrets.GCP_PROJECT_ID }}/$SERVICE_NAME:$GITHUB_SHA" \
             --platform "managed" \
             --allow-unauthenticated
