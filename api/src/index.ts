@@ -16,6 +16,7 @@ const server = new ApolloServer({
 
 const app = express();
 app.use(helmet(), cookieParser());
+app.set("trust proxy", 1);
 
 server.applyMiddleware({
   app,
