@@ -1,65 +1,42 @@
 name: STAGING - Build and Deploy API
-
 on:
   push:
     branches:
       - develop
-    paths:
-      - api/**
-      - .github
+    paths-ignore:
+      - web/**
+      - .github/workflows/deploy-staging-web.yml
 env:
-  GCP_PROJECT: "wedding-gift-planner"
-
+  PROJECT_ID: wedding-gift-planner
+  RUN_REGION: europe-west4
+  SERVICE_NAME: staging-api
 jobs:
   deploy:
-    name: Build and Deploy Staging Prisma API
+    name: Build and Deploy Staging API
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
-
+      - name: Checkout
+        uses: actions/checkout@v2
+      # Setup gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
-          version: "286.0.0"
-          service_account_email: ${{ secrets.GCP_STAGING_SA_EMAIL }}
-          service_account_key: ${{ secrets.GCP_STAGING_SA_KEY }}
+          version: "latest"
+          service_account_key: ${{ secrets.RUN_SA_KEY }}
           export_default_credentials: true
-          project_id: ${{ env.GCP_PROJECT }}
-
-      - name: Cache node modules
-        uses: actions/cache@v1
-        env:
-          cache-name: cache-node-modules-api
-        with:
-          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('api/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      - name: Build and deploy
-        env:
-          GCP_RUN_SERVICE_NAME: "staging-api"
-        run: |
-          cd api
-          yarn install --frozen-lockfile
-          # Build GCR image
-          export TAG="gcr.io/wedding-gift-planner/api:${GITHUB_SHA::8}"
+          project_id: $PROJECT_ID
+      # Build and push image to Google Container Registry
+      - name: Build
+        run: |-
           gcloud builds submit \
-            --tag $TAG \
-            --project $GCP_PROJECT
-          # Run cloud_sql_proxy
-          # wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
-          # chmod +x cloud_sql_proxy
-          # ./cloud_sql_proxy -instances=crave-staging:us-central1:crave-staging:prisma=tcp:5432 &
-          # Run migrations
-          # export DATABASE_URL="postgresql://prisma:${{ secrets.STAGING_DATABASE_PASSWORD }}@localhost/prisma?schema=public"
-          # npm run prisma:migrate:up
-          # Deploy GCR service
-          gcloud run deploy $GCP_RUN_SERVICE_NAME \
-            --image $TAG \
-            --platform managed \
-            --region europe-west4 \
-            --allow-unauthenticated \
-            --project $GCP_PROJECT
+            --quiet \
+            --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+            api
+      # Deploy image to Cloud Run
+      - name: Deploy
+        run: |-
+          gcloud run deploy "$SERVICE_NAME" \
+            --quiet \
+            --region "$RUN_REGION" \
+            --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+            --platform "managed" \
+            --allow-unauthenticated
