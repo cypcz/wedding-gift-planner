@@ -8,8 +8,6 @@ RUN yarn install
 
 COPY . .
 
-RUN yarn generate
-
 RUN yarn build
 
 FROM node:12.16.2
@@ -23,8 +21,8 @@ COPY package.json yarn.lock ./
 RUN yarn install --production
 
 COPY --from=builder /usr/src/app/dist ./
-COPY prisma/schema.prisma ./prisma
+COPY --from=builder /usr/src/app/prisma ./
 
-RUN yarn generate
+RUN yarn generate:prisma
 
 CMD [ "yarn", "start" ]

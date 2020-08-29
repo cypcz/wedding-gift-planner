@@ -3,13 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=production dotenv -- node dist/src/index.js",
+    "start": "NODE_ENV=production dotenv -- node src/index.js",
     "dev": "dotenv -- nodemon",
     "build": "yarn generate && tsc",
     "generate:prisma": "prisma generate",
     "generate:nexus": "NODE_ENV=development dotenv -- ts-node --transpile-only ./src/schema.ts",
     "generate": "yarn generate:prisma && yarn generate:nexus",
-    "postinstall": "yarn generate",
     "prisma:migrate:save": "dotenv -- prisma migrate save --experimental",
     "prisma:migrate:up": "dotenv -- prisma migrate up --experimental --auto-approve",
     "prisma:seed:dev": "dotenv -- ts-node prisma/seeds/index.ts"
