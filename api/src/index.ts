@@ -6,6 +6,9 @@ import "../generated/nexus";
 import { __prod__ } from "./constants";
 import { createContext } from "./context";
 import { schema } from "./schema";
+import { checkEnvVars } from "./utils";
+
+checkEnvVars();
 
 const server = new ApolloServer({
   schema,
