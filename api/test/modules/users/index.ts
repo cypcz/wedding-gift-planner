@@ -3,7 +3,7 @@ import * as faker from "faker";
 import gql from "graphql-tag";
 import { createTestClient, prisma } from "../../client";
 
-describe("User tests", () => {
+describe("User tests try", () => {
   before(async () => {
     await prisma.user.deleteMany({});
     console.log("succesfully dumped all users and related blocks");
