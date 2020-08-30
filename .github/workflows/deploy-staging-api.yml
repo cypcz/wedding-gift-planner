@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: |-
           cd api
-          yarn install ts-node @google-cloud/secret-manager
+          yarn add ts-node @google-cloud/secret-manager
           yarn config:staging
           gcloud builds submit \
             --quiet \
