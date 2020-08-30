@@ -31,8 +31,7 @@ jobs:
           yarn config:staging
           gcloud builds submit \
             --quiet \
-            --tag "gcr.io/${{ secrets.GCP_PROJECT_ID }}/$SERVICE_NAME:$GITHUB_SHA" \
-            api
+            --tag "gcr.io/${{ secrets.GCP_PROJECT_ID }}/$SERVICE_NAME:$GITHUB_SHA"
       # Deploy image to Cloud Run
       - name: Deploy
         run: |-
