@@ -10,12 +10,13 @@ import { schema } from "./schema";
 const server = new ApolloServer({
   schema,
   context: async ({ req, res }) => await createContext(req, res),
-  introspection: __prod__,
-  playground: __prod__,
+  introspection: !__prod__,
+  playground: !__prod__,
 });
 
 const app = express();
-app.use(helmet(), cookieParser());
+app.use(cookieParser());
+__prod__ && app.use(helmet());
 app.set("trust proxy", 1);
 
 server.applyMiddleware({
