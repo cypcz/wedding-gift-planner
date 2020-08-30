@@ -26,6 +26,7 @@
     "paths": {
       "@pages/*": ["pages/*"],
       "@containers/*": ["containers/*"],
+      "@components/*": ["components/*"],
       "@utils/*": ["utils/*"],
       "@codegen/*": ["codegen/*"]
     }

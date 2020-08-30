@@ -1,11 +1,15 @@
 import Index from "@containers/Index";
-import UserContext from "@utils/userContext";
+import Head from "next/head";
 
 const IndexPage = () => {
   return (
-    <UserContext>
+    <>
+      <Head>
+        <title>Wedding gift planner</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <Index />
-    </UserContext>
+    </>
   );
 };
 

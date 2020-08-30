@@ -10,7 +10,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        bg: "#DFCFBE",
+        bg: "#FAF6F1",
+      },
+      inset: {
+        1: "1rem",
+        "50%": "50%",
       },
     },
   },
