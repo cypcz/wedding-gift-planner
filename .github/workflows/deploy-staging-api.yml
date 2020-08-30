@@ -26,6 +26,9 @@ jobs:
       # Build and push image to Google Container Registry
       - name: Build
         run: |-
+          cd api
+          yarn install ts-node @google-cloud/secret-manager
+          yarn config:staging
           gcloud builds submit \
             --quiet \
             --tag "gcr.io/${{ secrets.GCP_PROJECT_ID }}/$SERVICE_NAME:$GITHUB_SHA" \
