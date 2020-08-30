@@ -29,7 +29,7 @@ jobs:
           cd api
           yarn add ts-node @google-cloud/secret-manager -D
           yarn config:staging
-          gcloud builds submit \
+          gcloud builds submit . \
             --quiet \
             --tag "gcr.io/${{ secrets.GCP_PROJECT_ID }}/$SERVICE_NAME:$GITHUB_SHA"
       # Deploy image to Cloud Run
