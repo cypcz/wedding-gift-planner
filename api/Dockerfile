@@ -22,6 +22,7 @@ RUN yarn install --production
 
 COPY --from=builder /usr/src/app/dist ./
 COPY --from=builder /usr/src/app/prisma ./
+COPY --from=builder /usr/src/app/.env ./
 
 RUN yarn generate:prisma
 
