@@ -21,7 +21,7 @@ const UserProvider: React.FC = ({ children }) => {
 
   const fetchMe = async () => {
     client
-      .query({ query: MeDocument, fetchPolicy: "network-only" })
+      .query({ query: MeDocument })
       .then(({ data }: MeQueryResult) => {
         setState({ user: data?.me, loading: false });
       })
