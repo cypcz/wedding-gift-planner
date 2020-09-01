@@ -5,5 +5,11 @@
 @font-face {
   font-family: "Corsiva";
   font-weight: 400;
+  font-display: swap;
   src: url(/fonts/corsiva.ttf) format("truetype");
+}
+
+input::placeholder {
+  text-align: center;
+  color: --var(secondary);
 }

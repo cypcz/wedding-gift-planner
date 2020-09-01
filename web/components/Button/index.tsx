@@ -8,7 +8,7 @@ interface Props {
 }
 
 const Button: React.FC<Props> = ({ children, className, link, href }) => {
-  const css = `rounded-full focus:outline-none border-solid border-secondary border-1 w-64 self-center bg-white py-2 text-secondary ${
+  const css = `rounded-full focus:outline-none border-solid border-secondary border-1 text-input w-64 self-center bg-white py-2 text-secondary ${
     className || ""
   }`;
   return link ? (

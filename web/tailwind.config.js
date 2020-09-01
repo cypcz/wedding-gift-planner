@@ -3,7 +3,6 @@ module.exports = {
     removeDeprecatedGapUtilities: true,
   },
   purge: [
-    "./utils/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
     "./containers/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
@@ -16,6 +15,7 @@ module.exports = {
       colors: {
         bg: "#FAF6F1",
         secondary: "#8F8686",
+        input: "#373232",
       },
       inset: {
         1: "1rem",
