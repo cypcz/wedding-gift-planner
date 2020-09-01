@@ -21,7 +21,7 @@ const UserProvider: React.FC = ({ children }) => {
 
   const fetchMe = async () => {
     client
-      .query({ query: MeDocument })
+      .query({ query: MeDocument, fetchPolicy: "no-cache" })
       .then(({ data }: MeQueryResult) => {
         setState({ user: data?.me, loading: false });
       })

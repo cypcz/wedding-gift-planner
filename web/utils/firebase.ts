@@ -1,5 +1,5 @@
 import firebase from "firebase/app";
-import "firebase/auth"; // If you need it
+import "firebase/auth";
 
 enum Env {
   STAGING = "staging",
@@ -17,7 +17,6 @@ const configs = {
     messagingSenderId: "738815682461",
     appId: "1:738815682461:web:c30ef2ac00dfc582c07174",
   },
-  [Env.DEMO]: {},
   [Env.PRODUCTION]: {},
 };
 
