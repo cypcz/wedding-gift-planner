@@ -27,9 +27,6 @@ declare global {
 }
 
 export interface NexusGenInputs {
-  CreateUserInput: { // input type
-    id: string; // ID!
-  }
   GiftWhereUniqueInput: { // input type
     id?: string | null; // String
   }
@@ -52,13 +49,10 @@ export interface NexusGenRootTypes {
     id: string; // String!
     name: string; // String!
   }
-  Me: { // root type
-    email?: string | null; // String
-    id: string; // ID!
-  }
   Mutation: {};
   Query: {};
   User: { // root type
+    email: string; // String!
     id: string; // String!
   }
   Wedding: { // root type
@@ -69,7 +63,6 @@ export interface NexusGenRootTypes {
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
-  CreateUserInput: NexusGenInputs['CreateUserInput'];
   GiftWhereUniqueInput: NexusGenInputs['GiftWhereUniqueInput'];
   String: NexusGenScalars['String'];
   Int: NexusGenScalars['Int'];
@@ -85,21 +78,18 @@ export interface NexusGenFieldTypes {
     name: string; // String!
     wedding: NexusGenRootTypes['Wedding']; // Wedding!
   }
-  Me: { // field return type
-    email: string | null; // String
-    id: string; // ID!
-  }
   Mutation: { // field return type
-    createUser: NexusGenRootTypes['User']; // User!
     createWedding: NexusGenRootTypes['Wedding']; // Wedding!
     login: boolean; // Boolean!
     logout: boolean; // Boolean!
+    register: boolean; // Boolean!
   }
   Query: { // field return type
-    me: NexusGenRootTypes['Me'] | null; // Me
+    me: NexusGenRootTypes['User'] | null; // User
     weddings: NexusGenRootTypes['Wedding'][]; // [Wedding!]!
   }
   User: { // field return type
+    email: string; // String!
     id: string; // String!
   }
   Wedding: { // field return type
@@ -112,12 +102,14 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenArgTypes {
   Mutation: {
-    createUser: { // args
-      input: NexusGenInputs['CreateUserInput']; // CreateUserInput!
-    }
     login: { // args
       csrfToken: string; // String!
       idToken: string; // String!
+      isProvider?: boolean | null; // Boolean
+    }
+    register: { // args
+      email: string; // String!
+      password: string; // String!
     }
   }
   Wedding: {
@@ -135,9 +127,9 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Gift" | "Me" | "Mutation" | "Query" | "User" | "Wedding";
+export type NexusGenObjectNames = "Gift" | "Mutation" | "Query" | "User" | "Wedding";
 
-export type NexusGenInputNames = "CreateUserInput" | "GiftWhereUniqueInput";
+export type NexusGenInputNames = "GiftWhereUniqueInput";
 
 export type NexusGenEnumNames = never;
 

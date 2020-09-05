@@ -16,6 +16,7 @@ module.exports = {
         bg: "#FAF6F1",
         secondary: "#8F8686",
         input: "#373232",
+        error: "#E15F5F",
       },
       inset: {
         1: "1rem",
@@ -26,6 +27,7 @@ module.exports = {
       },
       borderWidth: {
         1: "1px",
+        12: "12px",
       },
     },
   },

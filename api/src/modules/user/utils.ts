@@ -33,7 +33,7 @@ export const verifySessionCookie = async ({ req, res }: { req: Request; res: Res
 
   try {
     const decodedClaims = await firebaseAdmin.verifySessionCookie(sessionCookie, false);
-    return { id: decodedClaims.uid, email: decodedClaims.email };
+    return { id: decodedClaims.uid, email: decodedClaims.email! };
   } catch (e) {
     return null;
   } finally {

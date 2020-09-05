@@ -19,9 +19,9 @@ const UserProvider: React.FC = ({ children }) => {
   const client = useApolloClient();
   const [state, setState] = useState<State>({ user: null, loading: true });
 
-  const fetchMe = async () => {
+  const fetchMe = async (fromCache?: boolean) => {
     client
-      .query({ query: MeDocument, fetchPolicy: "no-cache" })
+      .query({ query: MeDocument, fetchPolicy: fromCache ? "cache-first" : "network-only" })
       .then(({ data }: MeQueryResult) => {
         setState({ user: data?.me, loading: false });
       })
@@ -31,7 +31,7 @@ const UserProvider: React.FC = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchMe();
+    fetchMe(true);
   }, []);
 
   return (

@@ -5,7 +5,7 @@
 @font-face {
   font-family: "Corsiva";
   font-weight: 400;
-  font-display: swap;
+  font-display: auto;
   src: url(/fonts/corsiva.ttf) format("truetype");
 }
 

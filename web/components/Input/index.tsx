@@ -7,7 +7,7 @@ const Input: React.FC<Props> = forwardRef((props, ref) => {
     <input
       {...props}
       ref={ref}
-      className="rounded-full border-solid border-secondary border-1 text-input outline-none w-1/5 my-1 h-10 pl-4 placeholder-secondary"
+      className="rounded-full border-solid border-secondary border-1 text-input outline-none w-full my-1 h-10 pl-4 placeholder-secondary"
     />
   );
 });

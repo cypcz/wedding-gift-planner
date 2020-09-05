@@ -1,25 +1,25 @@
 import Layout from "@components/Layout";
-import PrivateRoute from "@components/PrivateRoute";
-import App from "@containers/App";
+import PublicRoute from "@components/PublicRoute";
+import Register from "@containers/Register";
 import UserProvider from "@utils/userContext";
 import Head from "next/head";
 
-const AppPage = () => {
+const RegisterPage = () => {
   return (
     <>
       <Head>
-        <title>App - Wedding gift planner</title>
+        <title>Register - Wedding gift planner</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <UserProvider>
         <Layout>
-          <PrivateRoute>
-            <App />
-          </PrivateRoute>
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
         </Layout>
       </UserProvider>
     </>
   );
 };
 
-export default AppPage;
+export default RegisterPage;

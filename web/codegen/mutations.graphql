@@ -1,5 +1,9 @@
-mutation Login($idToken: String!, $csrfToken: String!) {
-  login(idToken: $idToken, csrfToken: $csrfToken)
+mutation Login($idToken: String!, $csrfToken: String!, $isProvider: Boolean) {
+  login(idToken: $idToken, csrfToken: $csrfToken, isProvider: $isProvider)
+}
+
+mutation Register($email: String!, $password: String!) {
+  register(email: $email, password: $password)
 }
 
 mutation Logout {

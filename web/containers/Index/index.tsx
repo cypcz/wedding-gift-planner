@@ -1,12 +1,12 @@
-import Link from "next/link";
+import BigButton from "@components/BigButton";
 
 const Index = () => {
   return (
     <>
-      <main>
-        <Link href="/auth">
-          <a>Login</a>
-        </Link>
+      <main className="flex justify-center items-center h-screen">
+        <BigButton link href="/app">
+          To the App!
+        </BigButton>
       </main>
       <footer></footer>
     </>

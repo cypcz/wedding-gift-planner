@@ -1,4 +1,4 @@
-import { useLoginMutation } from "@codegen/generated/graphql";
+import { useLoginMutation, useRegisterMutation } from "@codegen/generated/graphql";
 import Dot from "@components/Dot";
 import Input from "@components/Input";
 import firebase from "@utils/firebase";
@@ -13,21 +13,31 @@ interface LoginValues {
   password: string;
 }
 
-const Login = () => {
+const Register = () => {
   const [login] = useLoginMutation();
+  const [registerMutation] = useRegisterMutation();
   const { refetchUser } = useContext(UserContext);
   const [error, setError] = useState("");
   const { handleSubmit, register } = useForm({
     defaultValues: { email: "", password: "" },
   });
 
-  const handleLogin = async ({ email, password }: LoginValues) => {
+  const handleRegister = async ({ email, password }: LoginValues) => {
+    try {
+      await registerMutation({
+        variables: { email, password },
+      });
+    } catch (e) {
+      setError("Oops! Something went wrong!");
+      return;
+    }
+
     let idToken;
     try {
       const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
       idToken = await userCredential.user?.getIdToken();
     } catch (e) {
-      setError("Oops! Incorrect email or password!");
+      setError("Oops! Something went wrong!");
     }
 
     const csrfToken = getCookie("csrfToken");
@@ -42,21 +52,19 @@ const Login = () => {
 
   return (
     <main className="flex flex-col mt-16 w-1/5 mx-auto">
-      <form onSubmit={handleSubmit(handleLogin)}>
+      <form onSubmit={handleSubmit(handleRegister)}>
         <div className="text-center text-error font-corsiva text-xl mb-12">{error}</div>
-        <h3 className="font-corsiva text-center mb-10 text-2xl">Log in</h3>
+        <h3 className="font-corsiva text-center mb-10 text-2xl">Create Account</h3>
         <div className="my-1 flex flex-col items-center">
           <Input name="email" placeholder="email" ref={register()} />
         </div>
         <div className="mt-1 flex flex-col items-center">
           <Input name="password" placeholder="password" type="password" ref={register()} />
         </div>
-        <Link href="/forgot-password">
-          <div className="font-corsiva underline mb-8 cursor-pointer text-lg">
-            Forgot your password?
-          </div>
-        </Link>
-        <button className="flex flex-col items-center mx-auto focus:outline-none" type="submit">
+        <button
+          className="flex flex-col items-center mt-8 mx-auto focus:outline-none"
+          type="submit"
+        >
           <span className="font-corsiva text-3xl">Proceed</span>
           <div className="flex">
             <Dot className="h-1 w-1" />
@@ -75,4 +83,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

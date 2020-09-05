@@ -17,16 +17,7 @@ export type Scalars = {
 export type User = {
   __typename?: 'User';
   id: Scalars['String'];
-};
-
-export type Me = {
-  __typename?: 'Me';
-  id: Scalars['ID'];
-  email?: Maybe<Scalars['String']>;
-};
-
-export type CreateUserInput = {
-  id: Scalars['ID'];
+  email: Scalars['String'];
 };
 
 export type Wedding = {
@@ -58,38 +49,52 @@ export type GiftWhereUniqueInput = {
 
 export type Query = {
   __typename?: 'Query';
-  me?: Maybe<Me>;
+  me?: Maybe<User>;
   weddings: Array<Wedding>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createUser: User;
+  register: Scalars['Boolean'];
   login: Scalars['Boolean'];
   logout: Scalars['Boolean'];
   createWedding: Wedding;
 };
 
 
-export type MutationCreateUserArgs = {
-  input: CreateUserInput;
+export type MutationRegisterArgs = {
+  email: Scalars['String'];
+  password: Scalars['String'];
 };
 
 
 export type MutationLoginArgs = {
   idToken: Scalars['String'];
   csrfToken: Scalars['String'];
+  isProvider?: Maybe<Scalars['Boolean']>;
 };
 
 export type LoginMutationVariables = Exact<{
   idToken: Scalars['String'];
   csrfToken: Scalars['String'];
+  isProvider?: Maybe<Scalars['Boolean']>;
 }>;
 
 
 export type LoginMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'login'>
+);
+
+export type RegisterMutationVariables = Exact<{
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type RegisterMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'register'>
 );
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
@@ -106,15 +111,15 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
-    { __typename?: 'Me' }
-    & Pick<Me, 'id' | 'email'>
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'email'>
   )> }
 );
 
 
 export const LoginDocument = gql`
-    mutation Login($idToken: String!, $csrfToken: String!) {
-  login(idToken: $idToken, csrfToken: $csrfToken)
+    mutation Login($idToken: String!, $csrfToken: String!, $isProvider: Boolean) {
+  login(idToken: $idToken, csrfToken: $csrfToken, isProvider: $isProvider)
 }
     `;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
@@ -134,6 +139,7 @@ export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutati
  *   variables: {
  *      idToken: // value for 'idToken'
  *      csrfToken: // value for 'csrfToken'
+ *      isProvider: // value for 'isProvider'
  *   },
  * });
  */
@@ -143,6 +149,37 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const RegisterDocument = gql`
+    mutation Register($email: String!, $password: String!) {
+  register(email: $email, password: $password)
+}
+    `;
+export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
+
+/**
+ * __useRegisterMutation__
+ *
+ * To run a mutation, you first call `useRegisterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerMutation, { data, loading, error }] = useRegisterMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
+        return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, baseOptions);
+      }
+export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
+export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
+export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout

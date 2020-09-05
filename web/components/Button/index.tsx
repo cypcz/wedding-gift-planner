@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { HTMLAttributes } from "react";
+import { ButtonHTMLAttributes, DetailedHTMLProps, HTMLAttributes } from "react";
 
 interface Props {
   link?: boolean;
@@ -7,16 +7,22 @@ interface Props {
   className?: HTMLAttributes<HTMLElement>["className"];
 }
 
-const Button: React.FC<Props> = ({ children, className, link, href }) => {
+const Button: React.FC<
+  DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & Props
+> = ({ children, className, link, href, ...rest }) => {
   const css = `rounded-full focus:outline-none border-solid border-secondary border-1 text-input w-64 self-center bg-white py-2 text-secondary ${
     className || ""
   }`;
   return link ? (
     <Link href={href || "/"}>
-      <button className={css}>{children}</button>
+      <button {...rest} className={css}>
+        {children}
+      </button>
     </Link>
   ) : (
-    <button className={css}>{children}</button>
+    <button {...rest} className={css}>
+      {children}
+    </button>
   );
 };
 
