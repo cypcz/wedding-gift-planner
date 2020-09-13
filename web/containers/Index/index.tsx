@@ -4,7 +4,7 @@ const Index = () => {
   return (
     <>
       <main className="flex justify-center items-center h-screen">
-        <BigButton link href="/dashboard">
+        <BigButton link href="/wedding">
           To the App!
         </BigButton>
       </main>
