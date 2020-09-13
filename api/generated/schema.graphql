@@ -2,10 +2,7 @@
 ### Do not make changes to this file directly
 
 
-"""
-A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
-"""
-scalar Date
+scalar DateTime
 
 type Gift {
   id: String!
@@ -17,26 +14,53 @@ input GiftWhereUniqueInput {
   id: String
 }
 
+type Guest {
+  guestLink: String!
+  id: String!
+  plusGuests: [String!]!
+  plusX: Int!
+  user: User
+  wedding(after: WeddingWhereUniqueInput, before: WeddingWhereUniqueInput, first: Int, last: Int): [Wedding!]!
+}
+
+input GuestWhereUniqueInput {
+  id: String
+}
+
 type Mutation {
-  createWedding: Wedding!
   login(csrfToken: String!, idToken: String!, isProvider: Boolean): Boolean!
   logout: Boolean!
   register(email: String!, password: String!): Boolean!
+  upsertWedding(input: UpsertWeddingInput!): Wedding!
 }
 
 type Query {
   me: User
-  weddings: [Wedding!]!
+}
+
+input UpsertWeddingInput {
+  date: DateTime!
+  id: ID
+  partner1Name: String!
+  partner2Name: String!
+  partnersEmail: String
 }
 
 type User {
   email: String!
   id: String!
+  wedding: Wedding
 }
 
 type Wedding {
+  date: DateTime!
   gifts(after: GiftWhereUniqueInput, before: GiftWhereUniqueInput, first: Int, last: Int): [Gift!]!
-  guests: [String!]!
+  guests(after: GuestWhereUniqueInput, before: GuestWhereUniqueInput, first: Int, last: Int): [Guest!]!
   id: String!
-  name: String!
+  partner1Name: String!
+  partner2Name: String!
+}
+
+input WeddingWhereUniqueInput {
+  id: String
 }

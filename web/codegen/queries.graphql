@@ -2,5 +2,21 @@ query Me {
   me {
     id
     email
+    wedding {
+      id
+      partner1Name
+      partner2Name
+      date
+      gifts {
+        id
+        name
+      }
+      guests {
+        id
+        plusX
+        plusGuests
+        guestLink
+      }
+    }
   }
 }

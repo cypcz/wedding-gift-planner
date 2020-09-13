@@ -7,7 +7,7 @@ const PublicRoute: React.FC = ({ children }) => {
   const router = useRouter();
 
   if (user) {
-    router.replace("/app");
+    router.replace("/wedding");
     return <></>;
   }
   return <>{children}</>;

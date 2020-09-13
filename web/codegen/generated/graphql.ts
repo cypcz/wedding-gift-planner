@@ -9,23 +9,42 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
-  Date: any;
+  DateTime: any;
 };
-
 
 export type User = {
   __typename?: 'User';
   id: Scalars['String'];
   email: Scalars['String'];
+  wedding?: Maybe<Wedding>;
+};
+
+export type Guest = {
+  __typename?: 'Guest';
+  id: Scalars['String'];
+  plusX: Scalars['Int'];
+  plusGuests: Array<Scalars['String']>;
+  guestLink: Scalars['String'];
+  user?: Maybe<User>;
+  wedding: Array<Wedding>;
+};
+
+
+export type GuestWeddingArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<WeddingWhereUniqueInput>;
+  after?: Maybe<WeddingWhereUniqueInput>;
 };
 
 export type Wedding = {
   __typename?: 'Wedding';
   id: Scalars['String'];
-  name: Scalars['String'];
+  partner1Name: Scalars['String'];
+  partner2Name: Scalars['String'];
+  date: Scalars['DateTime'];
   gifts: Array<Gift>;
-  guests: Array<Scalars['String']>;
+  guests: Array<Guest>;
 };
 
 
@@ -36,6 +55,14 @@ export type WeddingGiftsArgs = {
   after?: Maybe<GiftWhereUniqueInput>;
 };
 
+
+export type WeddingGuestsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<GuestWhereUniqueInput>;
+  after?: Maybe<GuestWhereUniqueInput>;
+};
+
 export type Gift = {
   __typename?: 'Gift';
   id: Scalars['String'];
@@ -43,14 +70,30 @@ export type Gift = {
   wedding: Wedding;
 };
 
+export type UpsertWeddingInput = {
+  id?: Maybe<Scalars['ID']>;
+  partner1Name: Scalars['String'];
+  partner2Name: Scalars['String'];
+  partnersEmail?: Maybe<Scalars['String']>;
+  date: Scalars['DateTime'];
+};
+
+export type WeddingWhereUniqueInput = {
+  id?: Maybe<Scalars['String']>;
+};
+
+
 export type GiftWhereUniqueInput = {
+  id?: Maybe<Scalars['String']>;
+};
+
+export type GuestWhereUniqueInput = {
   id?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<User>;
-  weddings: Array<Wedding>;
 };
 
 export type Mutation = {
@@ -58,7 +101,7 @@ export type Mutation = {
   register: Scalars['Boolean'];
   login: Scalars['Boolean'];
   logout: Scalars['Boolean'];
-  createWedding: Wedding;
+  upsertWedding: Wedding;
 };
 
 
@@ -72,6 +115,11 @@ export type MutationLoginArgs = {
   idToken: Scalars['String'];
   csrfToken: Scalars['String'];
   isProvider?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type MutationUpsertWeddingArgs = {
+  input: UpsertWeddingInput;
 };
 
 export type LoginMutationVariables = Exact<{
@@ -105,6 +153,19 @@ export type LogoutMutation = (
   & Pick<Mutation, 'logout'>
 );
 
+export type UpsertWeddingMutationVariables = Exact<{
+  input: UpsertWeddingInput;
+}>;
+
+
+export type UpsertWeddingMutation = (
+  { __typename?: 'Mutation' }
+  & { upsertWedding: (
+    { __typename?: 'Wedding' }
+    & Pick<Wedding, 'id' | 'partner1Name' | 'partner2Name' | 'date'>
+  ) }
+);
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -113,6 +174,17 @@ export type MeQuery = (
   & { me?: Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'email'>
+    & { wedding?: Maybe<(
+      { __typename?: 'Wedding' }
+      & Pick<Wedding, 'id' | 'partner1Name' | 'partner2Name' | 'date'>
+      & { gifts: Array<(
+        { __typename?: 'Gift' }
+        & Pick<Gift, 'id' | 'name'>
+      )>, guests: Array<(
+        { __typename?: 'Guest' }
+        & Pick<Guest, 'id' | 'plusX' | 'plusGuests' | 'guestLink'>
+      )> }
+    )> }
   )> }
 );
 
@@ -209,11 +281,62 @@ export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<Logou
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const UpsertWeddingDocument = gql`
+    mutation UpsertWedding($input: UpsertWeddingInput!) {
+  upsertWedding(input: $input) {
+    id
+    partner1Name
+    partner2Name
+    date
+  }
+}
+    `;
+export type UpsertWeddingMutationFn = Apollo.MutationFunction<UpsertWeddingMutation, UpsertWeddingMutationVariables>;
+
+/**
+ * __useUpsertWeddingMutation__
+ *
+ * To run a mutation, you first call `useUpsertWeddingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertWeddingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertWeddingMutation, { data, loading, error }] = useUpsertWeddingMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpsertWeddingMutation(baseOptions?: Apollo.MutationHookOptions<UpsertWeddingMutation, UpsertWeddingMutationVariables>) {
+        return Apollo.useMutation<UpsertWeddingMutation, UpsertWeddingMutationVariables>(UpsertWeddingDocument, baseOptions);
+      }
+export type UpsertWeddingMutationHookResult = ReturnType<typeof useUpsertWeddingMutation>;
+export type UpsertWeddingMutationResult = Apollo.MutationResult<UpsertWeddingMutation>;
+export type UpsertWeddingMutationOptions = Apollo.BaseMutationOptions<UpsertWeddingMutation, UpsertWeddingMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {
     id
     email
+    wedding {
+      id
+      partner1Name
+      partner2Name
+      date
+      gifts {
+        id
+        name
+      }
+      guests {
+        id
+        plusX
+        plusGuests
+        guestLink
+      }
+    }
   }
 }
     `;

@@ -1,9 +1,17 @@
-import { queryField } from "@nexus/schema";
+/* import { idArg, queryField } from "@nexus/schema";
 
-export const weddings = queryField("weddings", {
+export const wedding = queryField("wedding", {
   type: "Wedding",
-  list: true,
-  async resolve(_root, _args, { prisma }) {
-    return prisma.wedding.findMany();
+  nullable: true,
+  args: {
+    id: idArg({ required: true }),
   },
-});
+  async resolve(_root, { id }, { prisma, user }) {
+    const wedding = await prisma.wedding.findOne({ where: { id }, include: { users: true } });
+    if (wedding?.users.some((wUser) => wUser.id === user?.id)) {
+      return wedding;
+    }
+
+    return null;
+  },
+}); */

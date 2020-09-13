@@ -22,8 +22,5 @@ export const schema = makeSchema({
         alias: "Context",
       },
     ],
-    backingTypeMap: {
-      Date: "Date",
-    },
   },
 });

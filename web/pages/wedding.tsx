@@ -1,20 +1,20 @@
 import Layout from "@components/Layout";
 import PrivateRoute from "@components/PrivateRoute";
-import App from "@containers/App";
+import Wedding from "@containers/Wedding";
 import UserProvider from "@utils/userContext";
 import Head from "next/head";
 
-const AppPage = () => {
+const WeddingPage = () => {
   return (
     <>
       <Head>
-        <title>App - Wedding gift planner</title>
+        <title>Wedding - Wedding gift planner</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <UserProvider>
-        <Layout>
+        <Layout heading="Congratulations on your Wedding!">
           <PrivateRoute>
-            <App />
+            <Wedding />
           </PrivateRoute>
         </Layout>
       </UserProvider>
@@ -22,4 +22,4 @@ const AppPage = () => {
   );
 };
 
-export default AppPage;
+export default WeddingPage;

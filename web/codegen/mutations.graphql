@@ -9,3 +9,12 @@ mutation Register($email: String!, $password: String!) {
 mutation Logout {
   logout
 }
+
+mutation UpsertWedding($input: UpsertWeddingInput!) {
+  upsertWedding(input: $input) {
+    id
+    partner1Name
+    partner2Name
+    date
+  }
+}

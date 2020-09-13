@@ -4,17 +4,9 @@
  */
 
 import * as Context from "../src/context"
-import { core } from "@nexus/schema"
-declare global {
-  interface NexusGenCustomInputMethods<TypeName extends string> {
-    date<FieldName extends string>(fieldName: FieldName, opts?: core.ScalarInputFieldConfig<core.GetGen3<"inputTypes", TypeName, FieldName>>): void // "Date";
-  }
-}
-declare global {
-  interface NexusGenCustomOutputMethods<TypeName extends string> {
-    date<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Date";
-  }
-}
+
+
+
 declare global {
   interface NexusGenCustomOutputProperties<TypeName extends string> {
     model: NexusPrisma<TypeName, 'model'>
@@ -30,6 +22,19 @@ export interface NexusGenInputs {
   GiftWhereUniqueInput: { // input type
     id?: string | null; // String
   }
+  GuestWhereUniqueInput: { // input type
+    id?: string | null; // String
+  }
+  UpsertWeddingInput: { // input type
+    date: NexusGenScalars['DateTime']; // DateTime!
+    id?: string | null; // ID
+    partner1Name: string; // String!
+    partner2Name: string; // String!
+    partnersEmail?: string | null; // String
+  }
+  WeddingWhereUniqueInput: { // input type
+    id?: string | null; // String
+  }
 }
 
 export interface NexusGenEnums {
@@ -41,13 +46,19 @@ export interface NexusGenScalars {
   Float: number
   Boolean: boolean
   ID: string
-  Date: Date
+  DateTime: any
 }
 
 export interface NexusGenRootTypes {
   Gift: { // root type
     id: string; // String!
     name: string; // String!
+  }
+  Guest: { // root type
+    guestLink: string; // String!
+    id: string; // String!
+    plusGuests: string[]; // [String!]!
+    plusX: number; // Int!
   }
   Mutation: {};
   Query: {};
@@ -56,20 +67,24 @@ export interface NexusGenRootTypes {
     id: string; // String!
   }
   Wedding: { // root type
-    guests: string[]; // [String!]!
+    date: NexusGenScalars['DateTime']; // DateTime!
     id: string; // String!
-    name: string; // String!
+    partner1Name: string; // String!
+    partner2Name: string; // String!
   }
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
   GiftWhereUniqueInput: NexusGenInputs['GiftWhereUniqueInput'];
+  GuestWhereUniqueInput: NexusGenInputs['GuestWhereUniqueInput'];
+  UpsertWeddingInput: NexusGenInputs['UpsertWeddingInput'];
+  WeddingWhereUniqueInput: NexusGenInputs['WeddingWhereUniqueInput'];
   String: NexusGenScalars['String'];
   Int: NexusGenScalars['Int'];
   Float: NexusGenScalars['Float'];
   Boolean: NexusGenScalars['Boolean'];
   ID: NexusGenScalars['ID'];
-  Date: NexusGenScalars['Date'];
+  DateTime: NexusGenScalars['DateTime'];
 }
 
 export interface NexusGenFieldTypes {
@@ -78,29 +93,47 @@ export interface NexusGenFieldTypes {
     name: string; // String!
     wedding: NexusGenRootTypes['Wedding']; // Wedding!
   }
+  Guest: { // field return type
+    guestLink: string; // String!
+    id: string; // String!
+    plusGuests: string[]; // [String!]!
+    plusX: number; // Int!
+    user: NexusGenRootTypes['User'] | null; // User
+    wedding: NexusGenRootTypes['Wedding'][]; // [Wedding!]!
+  }
   Mutation: { // field return type
-    createWedding: NexusGenRootTypes['Wedding']; // Wedding!
     login: boolean; // Boolean!
     logout: boolean; // Boolean!
     register: boolean; // Boolean!
+    upsertWedding: NexusGenRootTypes['Wedding']; // Wedding!
   }
   Query: { // field return type
     me: NexusGenRootTypes['User'] | null; // User
-    weddings: NexusGenRootTypes['Wedding'][]; // [Wedding!]!
   }
   User: { // field return type
     email: string; // String!
     id: string; // String!
+    wedding: NexusGenRootTypes['Wedding'] | null; // Wedding
   }
   Wedding: { // field return type
+    date: NexusGenScalars['DateTime']; // DateTime!
     gifts: NexusGenRootTypes['Gift'][]; // [Gift!]!
-    guests: string[]; // [String!]!
+    guests: NexusGenRootTypes['Guest'][]; // [Guest!]!
     id: string; // String!
-    name: string; // String!
+    partner1Name: string; // String!
+    partner2Name: string; // String!
   }
 }
 
 export interface NexusGenArgTypes {
+  Guest: {
+    wedding: { // args
+      after?: NexusGenInputs['WeddingWhereUniqueInput'] | null; // WeddingWhereUniqueInput
+      before?: NexusGenInputs['WeddingWhereUniqueInput'] | null; // WeddingWhereUniqueInput
+      first?: number | null; // Int
+      last?: number | null; // Int
+    }
+  }
   Mutation: {
     login: { // args
       csrfToken: string; // String!
@@ -111,11 +144,20 @@ export interface NexusGenArgTypes {
       email: string; // String!
       password: string; // String!
     }
+    upsertWedding: { // args
+      input: NexusGenInputs['UpsertWeddingInput']; // UpsertWeddingInput!
+    }
   }
   Wedding: {
     gifts: { // args
       after?: NexusGenInputs['GiftWhereUniqueInput'] | null; // GiftWhereUniqueInput
       before?: NexusGenInputs['GiftWhereUniqueInput'] | null; // GiftWhereUniqueInput
+      first?: number | null; // Int
+      last?: number | null; // Int
+    }
+    guests: { // args
+      after?: NexusGenInputs['GuestWhereUniqueInput'] | null; // GuestWhereUniqueInput
+      before?: NexusGenInputs['GuestWhereUniqueInput'] | null; // GuestWhereUniqueInput
       first?: number | null; // Int
       last?: number | null; // Int
     }
@@ -127,15 +169,15 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Gift" | "Mutation" | "Query" | "User" | "Wedding";
+export type NexusGenObjectNames = "Gift" | "Guest" | "Mutation" | "Query" | "User" | "Wedding";
 
-export type NexusGenInputNames = "GiftWhereUniqueInput";
+export type NexusGenInputNames = "GiftWhereUniqueInput" | "GuestWhereUniqueInput" | "UpsertWeddingInput" | "WeddingWhereUniqueInput";
 
 export type NexusGenEnumNames = never;
 
 export type NexusGenInterfaceNames = never;
 
-export type NexusGenScalarNames = "Boolean" | "Date" | "Float" | "ID" | "Int" | "String";
+export type NexusGenScalarNames = "Boolean" | "DateTime" | "Float" | "ID" | "Int" | "String";
 
 export type NexusGenUnionNames = never;
 

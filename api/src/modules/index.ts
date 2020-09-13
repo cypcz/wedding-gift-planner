@@ -1,7 +1,8 @@
-import { decorateType } from "@nexus/schema";
-import { GraphQLDate } from "graphql-scalars";
+import { arg } from "@nexus/schema";
+import { GraphQLDate } from "graphql-iso-date";
 
-export const GQLDate = decorateType(GraphQLDate, { rootTyping: "Date", asNexusMethod: "date" });
+export const dateArg = (options: any) => arg({ type: GraphQLDate, ...options });
+export const dateTimeArg = (options: any) => arg({ type: "DateTime", ...options });
 
 export * from "./user";
 export * from "./wedding";

@@ -1,13 +1,17 @@
 import { DetailedHTMLProps, forwardRef, InputHTMLAttributes } from "react";
 
-type Props = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
+type Props = {
+  fullWidth?: boolean;
+} & DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 
-const Input: React.FC<Props> = forwardRef((props, ref) => {
+const Input: React.FC<Props> = forwardRef(({ fullWidth, className, ...rest }, ref) => {
   return (
     <input
-      {...props}
+      {...rest}
       ref={ref}
-      className="rounded-full border-solid border-secondary border-1 text-input outline-none w-full my-1 h-10 pl-4 placeholder-secondary"
+      className={`rounded-full border-solid border-secondary border-1 text-input outline-none my-1 h-10 pl-4 placeholder-secondary ${
+        fullWidth ? "w-full" : ""
+      } ${className}`}
     />
   );
 });

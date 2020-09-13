@@ -1,11 +1,20 @@
-import { mutationField } from "@nexus/schema";
+import { arg, mutationField } from "@nexus/schema";
 
-export const createWedding = mutationField("createWedding", {
+export const upsertWedding = mutationField("upsertWedding", {
   type: "Wedding",
   args: {
-    // input: arg({ type: "CreateUserInput", required: true }),
+    input: arg({ type: "UpsertWeddingInput", required: true }),
   },
-  async resolve(_root, _args, { prisma }) {
-    return prisma.wedding.create({ data: { name: "test" } });
+  async resolve(_root, { input: { id, partnersEmail, ...input } }, { prisma, user }) {
+    if (id) {
+      return prisma.wedding.update({
+        where: { id },
+        data: { ...input, users: { connect: { id: user?.id } } },
+      });
+    }
+
+    return prisma.wedding.create({
+      data: { ...input, users: { connect: { id: user?.id } } },
+    });
   },
 });
