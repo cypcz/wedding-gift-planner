@@ -1,5 +1,5 @@
 export const checkEnvVars = () => {
-  const requiredEnvs = ["DATABASE_URL", "FE_URLS"];
+  const requiredEnvs = ["DATABASE_URL", "FE_URL"];
 
   const missingEnvVars = requiredEnvs.reduce((acc, envName) => {
     if (!process.env[envName]) {

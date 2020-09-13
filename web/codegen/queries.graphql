@@ -13,6 +13,9 @@ query Me {
       }
       guests {
         id
+        firstName
+        lastName
+        status
         plusX
         plusGuests
         guestLink

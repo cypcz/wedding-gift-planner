@@ -25,7 +25,7 @@ app.set("trust proxy", 1);
 server.applyMiddleware({
   app,
   cors: {
-    origin: process.env.FE_URLS?.split(","),
+    origin: process.env.FE_URL,
     credentials: true,
   },
 });

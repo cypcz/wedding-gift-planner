@@ -4,5 +4,6 @@ import { GraphQLDate } from "graphql-iso-date";
 export const dateArg = (options: any) => arg({ type: GraphQLDate, ...options });
 export const dateTimeArg = (options: any) => arg({ type: "DateTime", ...options });
 
+export * from "./guest";
 export * from "./user";
 export * from "./wedding";

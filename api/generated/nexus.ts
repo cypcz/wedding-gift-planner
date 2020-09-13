@@ -25,6 +25,13 @@ export interface NexusGenInputs {
   GuestWhereUniqueInput: { // input type
     id?: string | null; // String
   }
+  UpsertGuestInput: { // input type
+    firstName: string; // String!
+    id?: string | null; // ID
+    lastName: string; // String!
+    plusX?: number | null; // Int
+    weddingId: string; // ID!
+  }
   UpsertWeddingInput: { // input type
     date: NexusGenScalars['DateTime']; // DateTime!
     id?: string | null; // ID
@@ -32,12 +39,10 @@ export interface NexusGenInputs {
     partner2Name: string; // String!
     partnersEmail?: string | null; // String
   }
-  WeddingWhereUniqueInput: { // input type
-    id?: string | null; // String
-  }
 }
 
 export interface NexusGenEnums {
+  GuestStatus: "ACCEPTED" | "REJECTED" | "WAITING"
 }
 
 export interface NexusGenScalars {
@@ -55,10 +60,13 @@ export interface NexusGenRootTypes {
     name: string; // String!
   }
   Guest: { // root type
+    firstName: string; // String!
     guestLink: string; // String!
     id: string; // String!
+    lastName: string; // String!
     plusGuests: string[]; // [String!]!
     plusX: number; // Int!
+    status: NexusGenEnums['GuestStatus']; // GuestStatus!
   }
   Mutation: {};
   Query: {};
@@ -77,8 +85,9 @@ export interface NexusGenRootTypes {
 export interface NexusGenAllTypes extends NexusGenRootTypes {
   GiftWhereUniqueInput: NexusGenInputs['GiftWhereUniqueInput'];
   GuestWhereUniqueInput: NexusGenInputs['GuestWhereUniqueInput'];
+  UpsertGuestInput: NexusGenInputs['UpsertGuestInput'];
   UpsertWeddingInput: NexusGenInputs['UpsertWeddingInput'];
-  WeddingWhereUniqueInput: NexusGenInputs['WeddingWhereUniqueInput'];
+  GuestStatus: NexusGenEnums['GuestStatus'];
   String: NexusGenScalars['String'];
   Int: NexusGenScalars['Int'];
   Float: NexusGenScalars['Float'];
@@ -94,17 +103,21 @@ export interface NexusGenFieldTypes {
     wedding: NexusGenRootTypes['Wedding']; // Wedding!
   }
   Guest: { // field return type
+    firstName: string; // String!
     guestLink: string; // String!
     id: string; // String!
+    lastName: string; // String!
     plusGuests: string[]; // [String!]!
     plusX: number; // Int!
+    status: NexusGenEnums['GuestStatus']; // GuestStatus!
     user: NexusGenRootTypes['User'] | null; // User
-    wedding: NexusGenRootTypes['Wedding'][]; // [Wedding!]!
+    wedding: NexusGenRootTypes['Wedding']; // Wedding!
   }
   Mutation: { // field return type
     login: boolean; // Boolean!
     logout: boolean; // Boolean!
     register: boolean; // Boolean!
+    upsertGuest: NexusGenRootTypes['Guest']; // Guest!
     upsertWedding: NexusGenRootTypes['Wedding']; // Wedding!
   }
   Query: { // field return type
@@ -126,14 +139,6 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenArgTypes {
-  Guest: {
-    wedding: { // args
-      after?: NexusGenInputs['WeddingWhereUniqueInput'] | null; // WeddingWhereUniqueInput
-      before?: NexusGenInputs['WeddingWhereUniqueInput'] | null; // WeddingWhereUniqueInput
-      first?: number | null; // Int
-      last?: number | null; // Int
-    }
-  }
   Mutation: {
     login: { // args
       csrfToken: string; // String!
@@ -143,6 +148,9 @@ export interface NexusGenArgTypes {
     register: { // args
       email: string; // String!
       password: string; // String!
+    }
+    upsertGuest: { // args
+      input: NexusGenInputs['UpsertGuestInput']; // UpsertGuestInput!
     }
     upsertWedding: { // args
       input: NexusGenInputs['UpsertWeddingInput']; // UpsertWeddingInput!
@@ -171,9 +179,9 @@ export interface NexusGenInheritedFields {}
 
 export type NexusGenObjectNames = "Gift" | "Guest" | "Mutation" | "Query" | "User" | "Wedding";
 
-export type NexusGenInputNames = "GiftWhereUniqueInput" | "GuestWhereUniqueInput" | "UpsertWeddingInput" | "WeddingWhereUniqueInput";
+export type NexusGenInputNames = "GiftWhereUniqueInput" | "GuestWhereUniqueInput" | "UpsertGuestInput" | "UpsertWeddingInput";
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = "GuestStatus";
 
 export type NexusGenInterfaceNames = never;
 

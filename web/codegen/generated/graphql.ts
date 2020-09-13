@@ -12,29 +12,32 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type Guest = {
+  __typename?: 'Guest';
+  id: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  plusX: Scalars['Int'];
+  plusGuests: Array<Scalars['String']>;
+  guestLink: Scalars['String'];
+  status: GuestStatus;
+  user?: Maybe<User>;
+  wedding: Wedding;
+};
+
+export type UpsertGuestInput = {
+  id?: Maybe<Scalars['ID']>;
+  weddingId: Scalars['ID'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  plusX?: Maybe<Scalars['Int']>;
+};
+
 export type User = {
   __typename?: 'User';
   id: Scalars['String'];
   email: Scalars['String'];
   wedding?: Maybe<Wedding>;
-};
-
-export type Guest = {
-  __typename?: 'Guest';
-  id: Scalars['String'];
-  plusX: Scalars['Int'];
-  plusGuests: Array<Scalars['String']>;
-  guestLink: Scalars['String'];
-  user?: Maybe<User>;
-  wedding: Array<Wedding>;
-};
-
-
-export type GuestWeddingArgs = {
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  before?: Maybe<WeddingWhereUniqueInput>;
-  after?: Maybe<WeddingWhereUniqueInput>;
 };
 
 export type Wedding = {
@@ -78,9 +81,11 @@ export type UpsertWeddingInput = {
   date: Scalars['DateTime'];
 };
 
-export type WeddingWhereUniqueInput = {
-  id?: Maybe<Scalars['String']>;
-};
+export enum GuestStatus {
+  Waiting = 'WAITING',
+  Accepted = 'ACCEPTED',
+  Rejected = 'REJECTED'
+}
 
 
 export type GiftWhereUniqueInput = {
@@ -98,10 +103,16 @@ export type Query = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  upsertGuest: Guest;
   register: Scalars['Boolean'];
   login: Scalars['Boolean'];
   logout: Scalars['Boolean'];
   upsertWedding: Wedding;
+};
+
+
+export type MutationUpsertGuestArgs = {
+  input: UpsertGuestInput;
 };
 
 
@@ -166,6 +177,19 @@ export type UpsertWeddingMutation = (
   ) }
 );
 
+export type UpsertGuestMutationVariables = Exact<{
+  input: UpsertGuestInput;
+}>;
+
+
+export type UpsertGuestMutation = (
+  { __typename?: 'Mutation' }
+  & { upsertGuest: (
+    { __typename?: 'Guest' }
+    & Pick<Guest, 'id' | 'firstName' | 'lastName' | 'plusX' | 'plusGuests' | 'guestLink'>
+  ) }
+);
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -182,7 +206,7 @@ export type MeQuery = (
         & Pick<Gift, 'id' | 'name'>
       )>, guests: Array<(
         { __typename?: 'Guest' }
-        & Pick<Guest, 'id' | 'plusX' | 'plusGuests' | 'guestLink'>
+        & Pick<Guest, 'id' | 'firstName' | 'lastName' | 'status' | 'plusX' | 'plusGuests' | 'guestLink'>
       )> }
     )> }
   )> }
@@ -316,6 +340,43 @@ export function useUpsertWeddingMutation(baseOptions?: Apollo.MutationHookOption
 export type UpsertWeddingMutationHookResult = ReturnType<typeof useUpsertWeddingMutation>;
 export type UpsertWeddingMutationResult = Apollo.MutationResult<UpsertWeddingMutation>;
 export type UpsertWeddingMutationOptions = Apollo.BaseMutationOptions<UpsertWeddingMutation, UpsertWeddingMutationVariables>;
+export const UpsertGuestDocument = gql`
+    mutation UpsertGuest($input: UpsertGuestInput!) {
+  upsertGuest(input: $input) {
+    id
+    firstName
+    lastName
+    plusX
+    plusGuests
+    guestLink
+  }
+}
+    `;
+export type UpsertGuestMutationFn = Apollo.MutationFunction<UpsertGuestMutation, UpsertGuestMutationVariables>;
+
+/**
+ * __useUpsertGuestMutation__
+ *
+ * To run a mutation, you first call `useUpsertGuestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertGuestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertGuestMutation, { data, loading, error }] = useUpsertGuestMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpsertGuestMutation(baseOptions?: Apollo.MutationHookOptions<UpsertGuestMutation, UpsertGuestMutationVariables>) {
+        return Apollo.useMutation<UpsertGuestMutation, UpsertGuestMutationVariables>(UpsertGuestDocument, baseOptions);
+      }
+export type UpsertGuestMutationHookResult = ReturnType<typeof useUpsertGuestMutation>;
+export type UpsertGuestMutationResult = Apollo.MutationResult<UpsertGuestMutation>;
+export type UpsertGuestMutationOptions = Apollo.BaseMutationOptions<UpsertGuestMutation, UpsertGuestMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -332,6 +393,9 @@ export const MeDocument = gql`
       }
       guests {
         id
+        firstName
+        lastName
+        status
         plusX
         plusGuests
         guestLink

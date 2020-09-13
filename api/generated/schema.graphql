@@ -15,12 +15,21 @@ input GiftWhereUniqueInput {
 }
 
 type Guest {
+  firstName: String!
   guestLink: String!
   id: String!
+  lastName: String!
   plusGuests: [String!]!
   plusX: Int!
+  status: GuestStatus!
   user: User
-  wedding(after: WeddingWhereUniqueInput, before: WeddingWhereUniqueInput, first: Int, last: Int): [Wedding!]!
+  wedding: Wedding!
+}
+
+enum GuestStatus {
+  ACCEPTED
+  REJECTED
+  WAITING
 }
 
 input GuestWhereUniqueInput {
@@ -31,11 +40,20 @@ type Mutation {
   login(csrfToken: String!, idToken: String!, isProvider: Boolean): Boolean!
   logout: Boolean!
   register(email: String!, password: String!): Boolean!
+  upsertGuest(input: UpsertGuestInput!): Guest!
   upsertWedding(input: UpsertWeddingInput!): Wedding!
 }
 
 type Query {
   me: User
+}
+
+input UpsertGuestInput {
+  firstName: String!
+  id: ID
+  lastName: String!
+  plusX: Int
+  weddingId: ID!
 }
 
 input UpsertWeddingInput {
@@ -59,8 +77,4 @@ type Wedding {
   id: String!
   partner1Name: String!
   partner2Name: String!
-}
-
-input WeddingWhereUniqueInput {
-  id: String
 }

@@ -18,8 +18,12 @@ const Wedding = () => {
         {wedding.partner1Name} <div className="mx-8">&</div> {wedding.partner2Name}
       </h3>
       <div className="flex justify-between">
-        <BigButton>Guests</BigButton>
-        <BigButton>Gifts</BigButton>
+        <BigButton link href="/guests">
+          Guests
+        </BigButton>
+        <BigButton link href="/gifts">
+          Gifts
+        </BigButton>
         <BigButton onClick={() => setShowProfile(true)}>Profile</BigButton>
       </div>
     </main>
