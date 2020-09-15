@@ -1,5 +1,6 @@
 import { ApolloProvider } from "@apollo/client";
 import type { AppProps } from "next/app";
+import "react-datepicker/dist/react-datepicker.css";
 import { useApollo } from "../apollo/client";
 import "../styles/index.css";
 

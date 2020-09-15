@@ -13,3 +13,11 @@ input::placeholder {
   text-align: center;
   color: --var(secondary);
 }
+
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker__input-container > input {
+  width: inherit;
+}

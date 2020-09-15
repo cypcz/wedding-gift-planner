@@ -9,9 +9,9 @@ const Wedding = () => {
   const wedding = user?.wedding;
 
   return !wedding ? (
-    <WeddingForm />
+    <WeddingForm setShowProfile={setShowProfile} />
   ) : showProfile ? (
-    <WeddingForm />
+    <WeddingForm setShowProfile={setShowProfile} />
   ) : (
     <main className="flex flex-col mt-16 w-2/5 mx-auto">
       <h3 className="flex font-corsiva justify-center mb-4 text-4xl">
