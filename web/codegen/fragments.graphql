@@ -14,3 +14,28 @@ fragment WeddingInfo on Wedding {
   partner2Name
   date
 }
+
+fragment ContributionInfo on GiftContribution {
+  id
+  amount
+  currency
+  note
+  contributors {
+    id
+    firstName
+    lastName
+  }
+}
+
+fragment GiftInfo on Gift {
+  id
+  name
+  description
+  price
+  currency
+  link
+  imgUrl
+  contributions {
+    ...ContributionInfo
+  }
+}

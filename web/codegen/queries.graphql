@@ -22,3 +22,15 @@ query Guest($id: ID!) {
     ...GuestInfo
   }
 }
+
+query Gifts {
+  gifts {
+    ...GiftInfo
+  }
+}
+
+query Gift($id: ID!) {
+  gift(id: $id) {
+    ...GiftInfo
+  }
+}

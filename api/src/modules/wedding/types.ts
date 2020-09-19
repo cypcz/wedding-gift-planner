@@ -12,15 +12,6 @@ export const Wedding = objectType({
   },
 });
 
-export const Gift = objectType({
-  name: "Gift",
-  definition(t) {
-    t.model.id();
-    t.model.name();
-    t.model.wedding();
-  },
-});
-
 export const UpsertWeddingInput = inputObjectType({
   name: "UpsertWeddingInput",
   definition(t) {

@@ -2,12 +2,42 @@
 ### Do not make changes to this file directly
 
 
+enum Currency {
+  AUD
+  CZK
+  EUR
+  GBP
+  HUF
+  NZD
+  RUB
+  UAH
+  USD
+}
+
 scalar DateTime
 
 type Gift {
+  contributions(after: GiftContributionWhereUniqueInput, before: GiftContributionWhereUniqueInput, first: Int, last: Int): [GiftContribution!]!
+  currency: Currency!
+  description: String
   id: String!
+  imgUrl: String
+  link: String
   name: String!
-  wedding: Wedding!
+  price: Int!
+}
+
+type GiftContribution {
+  amount: Int!
+  contributors(after: GuestWhereUniqueInput, before: GuestWhereUniqueInput, first: Int, last: Int): [Guest!]!
+  currency: Currency!
+  gift: Gift!
+  id: String!
+  note: String
+}
+
+input GiftContributionWhereUniqueInput {
+  id: String
 }
 
 input GiftWhereUniqueInput {
@@ -22,8 +52,6 @@ type Guest {
   plusGuests: [String!]!
   plusX: Int!
   status: GuestStatus!
-  user: User
-  wedding: Wedding!
 }
 
 enum GuestStatus {
@@ -40,15 +68,29 @@ type Mutation {
   login(csrfToken: String!, idToken: String!, isProvider: Boolean): Boolean!
   logout: Boolean!
   register(email: String!, password: String!): Boolean!
+  upsertGift(input: UpsertGiftInput!): Gift!
   upsertGuest(input: UpsertGuestInput!): Guest!
   upsertWedding(input: UpsertWeddingInput!): Wedding!
 }
 
 type Query {
+  gift(id: ID!): Gift
+  gifts: [Gift!]!
   guest(id: ID!): Guest
   guests: [Guest!]!
   me: User
   wedding: Wedding
+}
+
+input UpsertGiftInput {
+  currency: Currency!
+  description: String
+  id: ID
+  imgUrl: String
+  link: String
+  name: String!
+  price: Int!
+  weddingId: ID!
 }
 
 input UpsertGuestInput {

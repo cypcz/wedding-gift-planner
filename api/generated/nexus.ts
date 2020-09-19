@@ -19,11 +19,24 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  GiftContributionWhereUniqueInput: { // input type
+    id?: string | null; // String
+  }
   GiftWhereUniqueInput: { // input type
     id?: string | null; // String
   }
   GuestWhereUniqueInput: { // input type
     id?: string | null; // String
+  }
+  UpsertGiftInput: { // input type
+    currency: NexusGenEnums['Currency']; // Currency!
+    description?: string | null; // String
+    id?: string | null; // ID
+    imgUrl?: string | null; // String
+    link?: string | null; // String
+    name: string; // String!
+    price: number; // Int!
+    weddingId: string; // ID!
   }
   UpsertGuestInput: { // input type
     firstName: string; // String!
@@ -42,6 +55,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  Currency: "AUD" | "CZK" | "EUR" | "GBP" | "HUF" | "NZD" | "RUB" | "UAH" | "USD"
   GuestStatus: "ACCEPTED" | "REJECTED" | "WAITING"
 }
 
@@ -56,8 +70,19 @@ export interface NexusGenScalars {
 
 export interface NexusGenRootTypes {
   Gift: { // root type
+    currency: NexusGenEnums['Currency']; // Currency!
+    description?: string | null; // String
     id: string; // String!
+    imgUrl?: string | null; // String
+    link?: string | null; // String
     name: string; // String!
+    price: number; // Int!
+  }
+  GiftContribution: { // root type
+    amount: number; // Int!
+    currency: NexusGenEnums['Currency']; // Currency!
+    id: string; // String!
+    note?: string | null; // String
   }
   Guest: { // root type
     firstName: string; // String!
@@ -83,10 +108,13 @@ export interface NexusGenRootTypes {
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
+  GiftContributionWhereUniqueInput: NexusGenInputs['GiftContributionWhereUniqueInput'];
   GiftWhereUniqueInput: NexusGenInputs['GiftWhereUniqueInput'];
   GuestWhereUniqueInput: NexusGenInputs['GuestWhereUniqueInput'];
+  UpsertGiftInput: NexusGenInputs['UpsertGiftInput'];
   UpsertGuestInput: NexusGenInputs['UpsertGuestInput'];
   UpsertWeddingInput: NexusGenInputs['UpsertWeddingInput'];
+  Currency: NexusGenEnums['Currency'];
   GuestStatus: NexusGenEnums['GuestStatus'];
   String: NexusGenScalars['String'];
   Int: NexusGenScalars['Int'];
@@ -98,9 +126,22 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
 
 export interface NexusGenFieldTypes {
   Gift: { // field return type
+    contributions: NexusGenRootTypes['GiftContribution'][]; // [GiftContribution!]!
+    currency: NexusGenEnums['Currency']; // Currency!
+    description: string | null; // String
     id: string; // String!
+    imgUrl: string | null; // String
+    link: string | null; // String
     name: string; // String!
-    wedding: NexusGenRootTypes['Wedding']; // Wedding!
+    price: number; // Int!
+  }
+  GiftContribution: { // field return type
+    amount: number; // Int!
+    contributors: NexusGenRootTypes['Guest'][]; // [Guest!]!
+    currency: NexusGenEnums['Currency']; // Currency!
+    gift: NexusGenRootTypes['Gift']; // Gift!
+    id: string; // String!
+    note: string | null; // String
   }
   Guest: { // field return type
     firstName: string; // String!
@@ -110,17 +151,18 @@ export interface NexusGenFieldTypes {
     plusGuests: string[]; // [String!]!
     plusX: number; // Int!
     status: NexusGenEnums['GuestStatus']; // GuestStatus!
-    user: NexusGenRootTypes['User'] | null; // User
-    wedding: NexusGenRootTypes['Wedding']; // Wedding!
   }
   Mutation: { // field return type
     login: boolean; // Boolean!
     logout: boolean; // Boolean!
     register: boolean; // Boolean!
+    upsertGift: NexusGenRootTypes['Gift']; // Gift!
     upsertGuest: NexusGenRootTypes['Guest']; // Guest!
     upsertWedding: NexusGenRootTypes['Wedding']; // Wedding!
   }
   Query: { // field return type
+    gift: NexusGenRootTypes['Gift'] | null; // Gift
+    gifts: NexusGenRootTypes['Gift'][]; // [Gift!]!
     guest: NexusGenRootTypes['Guest'] | null; // Guest
     guests: NexusGenRootTypes['Guest'][]; // [Guest!]!
     me: NexusGenRootTypes['User'] | null; // User
@@ -142,6 +184,22 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenArgTypes {
+  Gift: {
+    contributions: { // args
+      after?: NexusGenInputs['GiftContributionWhereUniqueInput'] | null; // GiftContributionWhereUniqueInput
+      before?: NexusGenInputs['GiftContributionWhereUniqueInput'] | null; // GiftContributionWhereUniqueInput
+      first?: number | null; // Int
+      last?: number | null; // Int
+    }
+  }
+  GiftContribution: {
+    contributors: { // args
+      after?: NexusGenInputs['GuestWhereUniqueInput'] | null; // GuestWhereUniqueInput
+      before?: NexusGenInputs['GuestWhereUniqueInput'] | null; // GuestWhereUniqueInput
+      first?: number | null; // Int
+      last?: number | null; // Int
+    }
+  }
   Mutation: {
     login: { // args
       csrfToken: string; // String!
@@ -152,6 +210,9 @@ export interface NexusGenArgTypes {
       email: string; // String!
       password: string; // String!
     }
+    upsertGift: { // args
+      input: NexusGenInputs['UpsertGiftInput']; // UpsertGiftInput!
+    }
     upsertGuest: { // args
       input: NexusGenInputs['UpsertGuestInput']; // UpsertGuestInput!
     }
@@ -160,6 +221,9 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    gift: { // args
+      id: string; // ID!
+    }
     guest: { // args
       id: string; // ID!
     }
@@ -185,11 +249,11 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Gift" | "Guest" | "Mutation" | "Query" | "User" | "Wedding";
+export type NexusGenObjectNames = "Gift" | "GiftContribution" | "Guest" | "Mutation" | "Query" | "User" | "Wedding";
 
-export type NexusGenInputNames = "GiftWhereUniqueInput" | "GuestWhereUniqueInput" | "UpsertGuestInput" | "UpsertWeddingInput";
+export type NexusGenInputNames = "GiftContributionWhereUniqueInput" | "GiftWhereUniqueInput" | "GuestWhereUniqueInput" | "UpsertGiftInput" | "UpsertGuestInput" | "UpsertWeddingInput";
 
-export type NexusGenEnumNames = "GuestStatus";
+export type NexusGenEnumNames = "Currency" | "GuestStatus";
 
 export type NexusGenInterfaceNames = never;
 

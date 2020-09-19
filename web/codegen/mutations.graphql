@@ -21,3 +21,9 @@ mutation UpsertGuest($input: UpsertGuestInput!) {
     ...GuestInfo
   }
 }
+
+mutation UpsertGift($input: UpsertGiftInput!) {
+  upsertGift(input: $input) {
+    ...GiftInfo
+  }
+}

@@ -12,6 +12,55 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type Gift = {
+  __typename?: 'Gift';
+  id: Scalars['String'];
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  price: Scalars['Int'];
+  currency: Currency;
+  link?: Maybe<Scalars['String']>;
+  imgUrl?: Maybe<Scalars['String']>;
+  contributions: Array<GiftContribution>;
+};
+
+
+export type GiftContributionsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<GiftContributionWhereUniqueInput>;
+  after?: Maybe<GiftContributionWhereUniqueInput>;
+};
+
+export type GiftContribution = {
+  __typename?: 'GiftContribution';
+  id: Scalars['String'];
+  amount: Scalars['Int'];
+  currency: Currency;
+  note?: Maybe<Scalars['String']>;
+  contributors: Array<Guest>;
+  gift: Gift;
+};
+
+
+export type GiftContributionContributorsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<GuestWhereUniqueInput>;
+  after?: Maybe<GuestWhereUniqueInput>;
+};
+
+export type UpsertGiftInput = {
+  id?: Maybe<Scalars['ID']>;
+  weddingId: Scalars['ID'];
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  price: Scalars['Int'];
+  currency: Currency;
+  imgUrl?: Maybe<Scalars['String']>;
+  link?: Maybe<Scalars['String']>;
+};
+
 export type Guest = {
   __typename?: 'Guest';
   id: Scalars['String'];
@@ -21,8 +70,6 @@ export type Guest = {
   plusGuests: Array<Scalars['String']>;
   guestLink: Scalars['String'];
   status: GuestStatus;
-  user?: Maybe<User>;
-  wedding: Wedding;
 };
 
 export type UpsertGuestInput = {
@@ -66,19 +113,32 @@ export type WeddingGuestsArgs = {
   after?: Maybe<GuestWhereUniqueInput>;
 };
 
-export type Gift = {
-  __typename?: 'Gift';
-  id: Scalars['String'];
-  name: Scalars['String'];
-  wedding: Wedding;
-};
-
 export type UpsertWeddingInput = {
   id?: Maybe<Scalars['ID']>;
   partner1Name: Scalars['String'];
   partner2Name: Scalars['String'];
   partnersEmail?: Maybe<Scalars['String']>;
   date: Scalars['DateTime'];
+};
+
+export enum Currency {
+  Eur = 'EUR',
+  Usd = 'USD',
+  Czk = 'CZK',
+  Uah = 'UAH',
+  Rub = 'RUB',
+  Gbp = 'GBP',
+  Huf = 'HUF',
+  Aud = 'AUD',
+  Nzd = 'NZD'
+}
+
+export type GiftContributionWhereUniqueInput = {
+  id?: Maybe<Scalars['String']>;
+};
+
+export type GuestWhereUniqueInput = {
+  id?: Maybe<Scalars['String']>;
 };
 
 export enum GuestStatus {
@@ -92,16 +152,19 @@ export type GiftWhereUniqueInput = {
   id?: Maybe<Scalars['String']>;
 };
 
-export type GuestWhereUniqueInput = {
-  id?: Maybe<Scalars['String']>;
-};
-
 export type Query = {
   __typename?: 'Query';
+  gifts: Array<Gift>;
+  gift?: Maybe<Gift>;
   guests: Array<Guest>;
   guest?: Maybe<Guest>;
   me?: Maybe<User>;
   wedding?: Maybe<Wedding>;
+};
+
+
+export type QueryGiftArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -111,11 +174,17 @@ export type QueryGuestArgs = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  upsertGift: Gift;
   upsertGuest: Guest;
   register: Scalars['Boolean'];
   login: Scalars['Boolean'];
   logout: Scalars['Boolean'];
   upsertWedding: Wedding;
+};
+
+
+export type MutationUpsertGiftArgs = {
+  input: UpsertGiftInput;
 };
 
 
@@ -149,6 +218,24 @@ export type GuestInfoFragment = (
 export type WeddingInfoFragment = (
   { __typename?: 'Wedding' }
   & Pick<Wedding, 'id' | 'partner1Name' | 'partner2Name' | 'date'>
+);
+
+export type ContributionInfoFragment = (
+  { __typename?: 'GiftContribution' }
+  & Pick<GiftContribution, 'id' | 'amount' | 'currency' | 'note'>
+  & { contributors: Array<(
+    { __typename?: 'Guest' }
+    & Pick<Guest, 'id' | 'firstName' | 'lastName'>
+  )> }
+);
+
+export type GiftInfoFragment = (
+  { __typename?: 'Gift' }
+  & Pick<Gift, 'id' | 'name' | 'description' | 'price' | 'currency' | 'link' | 'imgUrl'>
+  & { contributions: Array<(
+    { __typename?: 'GiftContribution' }
+    & ContributionInfoFragment
+  )> }
 );
 
 export type LoginMutationVariables = Exact<{
@@ -208,6 +295,19 @@ export type UpsertGuestMutation = (
   ) }
 );
 
+export type UpsertGiftMutationVariables = Exact<{
+  input: UpsertGiftInput;
+}>;
+
+
+export type UpsertGiftMutation = (
+  { __typename?: 'Mutation' }
+  & { upsertGift: (
+    { __typename?: 'Gift' }
+    & GiftInfoFragment
+  ) }
+);
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -254,6 +354,30 @@ export type GuestQuery = (
   )> }
 );
 
+export type GiftsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GiftsQuery = (
+  { __typename?: 'Query' }
+  & { gifts: Array<(
+    { __typename?: 'Gift' }
+    & GiftInfoFragment
+  )> }
+);
+
+export type GiftQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GiftQuery = (
+  { __typename?: 'Query' }
+  & { gift?: Maybe<(
+    { __typename?: 'Gift' }
+    & GiftInfoFragment
+  )> }
+);
+
 export const GuestInfoFragmentDoc = gql`
     fragment GuestInfo on Guest {
   id
@@ -273,6 +397,33 @@ export const WeddingInfoFragmentDoc = gql`
   date
 }
     `;
+export const ContributionInfoFragmentDoc = gql`
+    fragment ContributionInfo on GiftContribution {
+  id
+  amount
+  currency
+  note
+  contributors {
+    id
+    firstName
+    lastName
+  }
+}
+    `;
+export const GiftInfoFragmentDoc = gql`
+    fragment GiftInfo on Gift {
+  id
+  name
+  description
+  price
+  currency
+  link
+  imgUrl
+  contributions {
+    ...ContributionInfo
+  }
+}
+    ${ContributionInfoFragmentDoc}`;
 export const LoginDocument = gql`
     mutation Login($idToken: String!, $csrfToken: String!, $isProvider: Boolean) {
   login(idToken: $idToken, csrfToken: $csrfToken, isProvider: $isProvider)
@@ -429,6 +580,38 @@ export function useUpsertGuestMutation(baseOptions?: Apollo.MutationHookOptions<
 export type UpsertGuestMutationHookResult = ReturnType<typeof useUpsertGuestMutation>;
 export type UpsertGuestMutationResult = Apollo.MutationResult<UpsertGuestMutation>;
 export type UpsertGuestMutationOptions = Apollo.BaseMutationOptions<UpsertGuestMutation, UpsertGuestMutationVariables>;
+export const UpsertGiftDocument = gql`
+    mutation UpsertGift($input: UpsertGiftInput!) {
+  upsertGift(input: $input) {
+    ...GiftInfo
+  }
+}
+    ${GiftInfoFragmentDoc}`;
+export type UpsertGiftMutationFn = Apollo.MutationFunction<UpsertGiftMutation, UpsertGiftMutationVariables>;
+
+/**
+ * __useUpsertGiftMutation__
+ *
+ * To run a mutation, you first call `useUpsertGiftMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertGiftMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertGiftMutation, { data, loading, error }] = useUpsertGiftMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpsertGiftMutation(baseOptions?: Apollo.MutationHookOptions<UpsertGiftMutation, UpsertGiftMutationVariables>) {
+        return Apollo.useMutation<UpsertGiftMutation, UpsertGiftMutationVariables>(UpsertGiftDocument, baseOptions);
+      }
+export type UpsertGiftMutationHookResult = ReturnType<typeof useUpsertGiftMutation>;
+export type UpsertGiftMutationResult = Apollo.MutationResult<UpsertGiftMutation>;
+export type UpsertGiftMutationOptions = Apollo.BaseMutationOptions<UpsertGiftMutation, UpsertGiftMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -559,3 +742,68 @@ export function useGuestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Gues
 export type GuestQueryHookResult = ReturnType<typeof useGuestQuery>;
 export type GuestLazyQueryHookResult = ReturnType<typeof useGuestLazyQuery>;
 export type GuestQueryResult = Apollo.QueryResult<GuestQuery, GuestQueryVariables>;
+export const GiftsDocument = gql`
+    query Gifts {
+  gifts {
+    ...GiftInfo
+  }
+}
+    ${GiftInfoFragmentDoc}`;
+
+/**
+ * __useGiftsQuery__
+ *
+ * To run a query within a React component, call `useGiftsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGiftsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGiftsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGiftsQuery(baseOptions?: Apollo.QueryHookOptions<GiftsQuery, GiftsQueryVariables>) {
+        return Apollo.useQuery<GiftsQuery, GiftsQueryVariables>(GiftsDocument, baseOptions);
+      }
+export function useGiftsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GiftsQuery, GiftsQueryVariables>) {
+          return Apollo.useLazyQuery<GiftsQuery, GiftsQueryVariables>(GiftsDocument, baseOptions);
+        }
+export type GiftsQueryHookResult = ReturnType<typeof useGiftsQuery>;
+export type GiftsLazyQueryHookResult = ReturnType<typeof useGiftsLazyQuery>;
+export type GiftsQueryResult = Apollo.QueryResult<GiftsQuery, GiftsQueryVariables>;
+export const GiftDocument = gql`
+    query Gift($id: ID!) {
+  gift(id: $id) {
+    ...GiftInfo
+  }
+}
+    ${GiftInfoFragmentDoc}`;
+
+/**
+ * __useGiftQuery__
+ *
+ * To run a query within a React component, call `useGiftQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGiftQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGiftQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGiftQuery(baseOptions?: Apollo.QueryHookOptions<GiftQuery, GiftQueryVariables>) {
+        return Apollo.useQuery<GiftQuery, GiftQueryVariables>(GiftDocument, baseOptions);
+      }
+export function useGiftLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GiftQuery, GiftQueryVariables>) {
+          return Apollo.useLazyQuery<GiftQuery, GiftQueryVariables>(GiftDocument, baseOptions);
+        }
+export type GiftQueryHookResult = ReturnType<typeof useGiftQuery>;
+export type GiftLazyQueryHookResult = ReturnType<typeof useGiftLazyQuery>;
+export type GiftQueryResult = Apollo.QueryResult<GiftQuery, GiftQueryVariables>;

@@ -10,8 +10,6 @@ export const Guest = objectType({
     t.model.plusGuests();
     t.model.guestLink();
     t.model.status();
-    t.model.user();
-    t.model.wedding();
   },
 });
 
