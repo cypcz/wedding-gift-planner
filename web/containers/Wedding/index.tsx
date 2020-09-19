@@ -1,17 +1,19 @@
+import { WeddingInfoFragment } from "@codegen/generated/graphql";
 import BigButton from "@components/BigButton";
-import { UserContext } from "@utils/userContext";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import WeddingForm from "./form";
 
-const Wedding = () => {
+interface Props {
+  wedding?: WeddingInfoFragment;
+}
+
+const Wedding: React.FC<Props> = ({ wedding }) => {
   const [showProfile, setShowProfile] = useState(false);
-  const { user } = useContext(UserContext);
-  const wedding = user?.wedding;
 
   return !wedding ? (
-    <WeddingForm setShowProfile={setShowProfile} />
+    <WeddingForm wedding={wedding} setShowProfile={setShowProfile} />
   ) : showProfile ? (
-    <WeddingForm setShowProfile={setShowProfile} />
+    <WeddingForm wedding={wedding} setShowProfile={setShowProfile} />
   ) : (
     <main className="flex flex-col mt-16 w-2/5 mx-auto">
       <h3 className="flex font-corsiva justify-center mb-4 text-4xl">

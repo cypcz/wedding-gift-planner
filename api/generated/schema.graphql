@@ -45,7 +45,10 @@ type Mutation {
 }
 
 type Query {
+  guest(id: ID!): Guest
+  guests: [Guest!]!
   me: User
+  wedding: Wedding
 }
 
 input UpsertGuestInput {

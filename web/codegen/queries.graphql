@@ -2,24 +2,23 @@ query Me {
   me {
     id
     email
-    wedding {
-      id
-      partner1Name
-      partner2Name
-      date
-      gifts {
-        id
-        name
-      }
-      guests {
-        id
-        firstName
-        lastName
-        status
-        plusX
-        plusGuests
-        guestLink
-      }
-    }
+  }
+}
+
+query Wedding {
+  wedding {
+    ...WeddingInfo
+  }
+}
+
+query Guests {
+  guests {
+    ...GuestInfo
+  }
+}
+
+query Guest($id: ID!) {
+  guest(id: $id) {
+    ...GuestInfo
   }
 }

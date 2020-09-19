@@ -1,36 +1,51 @@
-import { useUpsertWeddingMutation } from "@codegen/generated/graphql";
+import {
+  useUpsertWeddingMutation,
+  WeddingDocument,
+  WeddingQuery,
+} from "@codegen/generated/graphql";
 import DatePicker from "@components/DatePicker";
 import Dot from "@components/Dot";
 import Input from "@components/Input";
-import { UserContext } from "@utils/userContext";
 import { parseISO } from "date-fns";
 import { useFormik } from "formik";
-import { Dispatch, SetStateAction, useContext } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 interface Props {
   setShowProfile: Dispatch<SetStateAction<boolean>>;
+  wedding: WeddingQuery["wedding"];
 }
 
-const WeddingForm: React.FC<Props> = ({ setShowProfile }) => {
-  const { user, refetchUser } = useContext(UserContext);
+const WeddingForm: React.FC<Props> = ({ setShowProfile, wedding }) => {
   const [upsertWedding] = useUpsertWeddingMutation();
   const { handleChange, values, handleSubmit, setFieldValue } = useFormik({
     initialValues: {
-      partner1Name: user?.wedding?.partner1Name || "",
-      partner2Name: user?.wedding?.partner2Name || "",
+      partner1Name: wedding?.partner1Name || "",
+      partner2Name: wedding?.partner2Name || "",
       partnersEmail: "",
-      date: parseISO(user?.wedding?.date) || undefined,
+      date: wedding?.date ? parseISO(wedding?.date) : undefined,
     },
     onSubmit: async (values) => {
       await upsertWedding({
         variables: {
-          input: { ...values, id: user?.wedding?.id, date: values.date },
+          input: { ...values, id: wedding?.id, date: values.date },
+        },
+        update: (cache, { data }) => {
+          const existingData = cache.readQuery({
+            query: WeddingDocument,
+          }) as WeddingQuery;
+          cache.writeQuery({
+            query: WeddingDocument,
+            data: {
+              wedding: {
+                ...existingData.wedding,
+                ...data?.upsertWedding,
+              },
+            },
+          });
         },
       });
 
-      await refetchUser();
-
-      if (user?.wedding?.id) setShowProfile(false);
+      if (wedding?.id) setShowProfile(false);
     },
   });
 

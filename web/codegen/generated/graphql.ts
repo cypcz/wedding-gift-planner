@@ -98,7 +98,15 @@ export type GuestWhereUniqueInput = {
 
 export type Query = {
   __typename?: 'Query';
+  guests: Array<Guest>;
+  guest?: Maybe<Guest>;
   me?: Maybe<User>;
+  wedding?: Maybe<Wedding>;
+};
+
+
+export type QueryGuestArgs = {
+  id: Scalars['ID'];
 };
 
 export type Mutation = {
@@ -132,6 +140,16 @@ export type MutationLoginArgs = {
 export type MutationUpsertWeddingArgs = {
   input: UpsertWeddingInput;
 };
+
+export type GuestInfoFragment = (
+  { __typename?: 'Guest' }
+  & Pick<Guest, 'id' | 'firstName' | 'lastName' | 'status' | 'plusX' | 'plusGuests' | 'guestLink'>
+);
+
+export type WeddingInfoFragment = (
+  { __typename?: 'Wedding' }
+  & Pick<Wedding, 'id' | 'partner1Name' | 'partner2Name' | 'date'>
+);
 
 export type LoginMutationVariables = Exact<{
   idToken: Scalars['String'];
@@ -173,7 +191,7 @@ export type UpsertWeddingMutation = (
   { __typename?: 'Mutation' }
   & { upsertWedding: (
     { __typename?: 'Wedding' }
-    & Pick<Wedding, 'id' | 'partner1Name' | 'partner2Name' | 'date'>
+    & WeddingInfoFragment
   ) }
 );
 
@@ -186,7 +204,7 @@ export type UpsertGuestMutation = (
   { __typename?: 'Mutation' }
   & { upsertGuest: (
     { __typename?: 'Guest' }
-    & Pick<Guest, 'id' | 'firstName' | 'lastName' | 'plusX' | 'plusGuests' | 'guestLink'>
+    & GuestInfoFragment
   ) }
 );
 
@@ -198,21 +216,63 @@ export type MeQuery = (
   & { me?: Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'email'>
-    & { wedding?: Maybe<(
-      { __typename?: 'Wedding' }
-      & Pick<Wedding, 'id' | 'partner1Name' | 'partner2Name' | 'date'>
-      & { gifts: Array<(
-        { __typename?: 'Gift' }
-        & Pick<Gift, 'id' | 'name'>
-      )>, guests: Array<(
-        { __typename?: 'Guest' }
-        & Pick<Guest, 'id' | 'firstName' | 'lastName' | 'status' | 'plusX' | 'plusGuests' | 'guestLink'>
-      )> }
-    )> }
   )> }
 );
 
+export type WeddingQueryVariables = Exact<{ [key: string]: never; }>;
 
+
+export type WeddingQuery = (
+  { __typename?: 'Query' }
+  & { wedding?: Maybe<(
+    { __typename?: 'Wedding' }
+    & WeddingInfoFragment
+  )> }
+);
+
+export type GuestsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GuestsQuery = (
+  { __typename?: 'Query' }
+  & { guests: Array<(
+    { __typename?: 'Guest' }
+    & GuestInfoFragment
+  )> }
+);
+
+export type GuestQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GuestQuery = (
+  { __typename?: 'Query' }
+  & { guest?: Maybe<(
+    { __typename?: 'Guest' }
+    & GuestInfoFragment
+  )> }
+);
+
+export const GuestInfoFragmentDoc = gql`
+    fragment GuestInfo on Guest {
+  id
+  firstName
+  lastName
+  status
+  plusX
+  plusGuests
+  guestLink
+}
+    `;
+export const WeddingInfoFragmentDoc = gql`
+    fragment WeddingInfo on Wedding {
+  id
+  partner1Name
+  partner2Name
+  date
+}
+    `;
 export const LoginDocument = gql`
     mutation Login($idToken: String!, $csrfToken: String!, $isProvider: Boolean) {
   login(idToken: $idToken, csrfToken: $csrfToken, isProvider: $isProvider)
@@ -308,13 +368,10 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, L
 export const UpsertWeddingDocument = gql`
     mutation UpsertWedding($input: UpsertWeddingInput!) {
   upsertWedding(input: $input) {
-    id
-    partner1Name
-    partner2Name
-    date
+    ...WeddingInfo
   }
 }
-    `;
+    ${WeddingInfoFragmentDoc}`;
 export type UpsertWeddingMutationFn = Apollo.MutationFunction<UpsertWeddingMutation, UpsertWeddingMutationVariables>;
 
 /**
@@ -343,15 +400,10 @@ export type UpsertWeddingMutationOptions = Apollo.BaseMutationOptions<UpsertWedd
 export const UpsertGuestDocument = gql`
     mutation UpsertGuest($input: UpsertGuestInput!) {
   upsertGuest(input: $input) {
-    id
-    firstName
-    lastName
-    plusX
-    plusGuests
-    guestLink
+    ...GuestInfo
   }
 }
-    `;
+    ${GuestInfoFragmentDoc}`;
 export type UpsertGuestMutationFn = Apollo.MutationFunction<UpsertGuestMutation, UpsertGuestMutationVariables>;
 
 /**
@@ -382,25 +434,6 @@ export const MeDocument = gql`
   me {
     id
     email
-    wedding {
-      id
-      partner1Name
-      partner2Name
-      date
-      gifts {
-        id
-        name
-      }
-      guests {
-        id
-        firstName
-        lastName
-        status
-        plusX
-        plusGuests
-        guestLink
-      }
-    }
   }
 }
     `;
@@ -429,3 +462,100 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const WeddingDocument = gql`
+    query Wedding {
+  wedding {
+    ...WeddingInfo
+  }
+}
+    ${WeddingInfoFragmentDoc}`;
+
+/**
+ * __useWeddingQuery__
+ *
+ * To run a query within a React component, call `useWeddingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useWeddingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useWeddingQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useWeddingQuery(baseOptions?: Apollo.QueryHookOptions<WeddingQuery, WeddingQueryVariables>) {
+        return Apollo.useQuery<WeddingQuery, WeddingQueryVariables>(WeddingDocument, baseOptions);
+      }
+export function useWeddingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WeddingQuery, WeddingQueryVariables>) {
+          return Apollo.useLazyQuery<WeddingQuery, WeddingQueryVariables>(WeddingDocument, baseOptions);
+        }
+export type WeddingQueryHookResult = ReturnType<typeof useWeddingQuery>;
+export type WeddingLazyQueryHookResult = ReturnType<typeof useWeddingLazyQuery>;
+export type WeddingQueryResult = Apollo.QueryResult<WeddingQuery, WeddingQueryVariables>;
+export const GuestsDocument = gql`
+    query Guests {
+  guests {
+    ...GuestInfo
+  }
+}
+    ${GuestInfoFragmentDoc}`;
+
+/**
+ * __useGuestsQuery__
+ *
+ * To run a query within a React component, call `useGuestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGuestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGuestsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGuestsQuery(baseOptions?: Apollo.QueryHookOptions<GuestsQuery, GuestsQueryVariables>) {
+        return Apollo.useQuery<GuestsQuery, GuestsQueryVariables>(GuestsDocument, baseOptions);
+      }
+export function useGuestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GuestsQuery, GuestsQueryVariables>) {
+          return Apollo.useLazyQuery<GuestsQuery, GuestsQueryVariables>(GuestsDocument, baseOptions);
+        }
+export type GuestsQueryHookResult = ReturnType<typeof useGuestsQuery>;
+export type GuestsLazyQueryHookResult = ReturnType<typeof useGuestsLazyQuery>;
+export type GuestsQueryResult = Apollo.QueryResult<GuestsQuery, GuestsQueryVariables>;
+export const GuestDocument = gql`
+    query Guest($id: ID!) {
+  guest(id: $id) {
+    ...GuestInfo
+  }
+}
+    ${GuestInfoFragmentDoc}`;
+
+/**
+ * __useGuestQuery__
+ *
+ * To run a query within a React component, call `useGuestQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGuestQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGuestQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGuestQuery(baseOptions?: Apollo.QueryHookOptions<GuestQuery, GuestQueryVariables>) {
+        return Apollo.useQuery<GuestQuery, GuestQueryVariables>(GuestDocument, baseOptions);
+      }
+export function useGuestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GuestQuery, GuestQueryVariables>) {
+          return Apollo.useLazyQuery<GuestQuery, GuestQueryVariables>(GuestDocument, baseOptions);
+        }
+export type GuestQueryHookResult = ReturnType<typeof useGuestQuery>;
+export type GuestLazyQueryHookResult = ReturnType<typeof useGuestLazyQuery>;
+export type GuestQueryResult = Apollo.QueryResult<GuestQuery, GuestQueryVariables>;

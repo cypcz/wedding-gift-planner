@@ -12,21 +12,12 @@ mutation Logout {
 
 mutation UpsertWedding($input: UpsertWeddingInput!) {
   upsertWedding(input: $input) {
-    id
-    partner1Name
-    partner2Name
-    date
+    ...WeddingInfo
   }
 }
 
 mutation UpsertGuest($input: UpsertGuestInput!) {
   upsertGuest(input: $input) {
-    id
-    firstName
-    lastName
-    plusX
-    plusGuests
-    status
-    guestLink
+    ...GuestInfo
   }
 }

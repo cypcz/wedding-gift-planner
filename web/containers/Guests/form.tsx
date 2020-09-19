@@ -1,36 +1,62 @@
-import { useUpsertGuestMutation } from "@codegen/generated/graphql";
+import {
+  GuestInfoFragment,
+  GuestsDocument,
+  GuestsQuery,
+  useUpsertGuestMutation,
+  WeddingInfoFragment,
+} from "@codegen/generated/graphql";
 import Dot from "@components/Dot";
 import Input from "@components/Input";
-import { UserContext } from "@utils/userContext";
 import { useFormik } from "formik";
-import { useRouter } from "next/router";
-import { useContext } from "react";
+import { NextRouter } from "next/router";
 
-const GuestForm = () => {
-  const { user, refetchUser } = useContext(UserContext);
-  const router = useRouter();
+interface Props {
+  guest?: GuestInfoFragment;
+  wedding: WeddingInfoFragment;
+  router: NextRouter;
+}
+
+const GuestForm: React.FC<Props> = ({ wedding, guest, router }) => {
   const [upsertGuest] = useUpsertGuestMutation();
   const { handleSubmit, handleChange, values } = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
-      plusX: 0,
+      firstName: guest?.firstName || "",
+      lastName: guest?.lastName || "",
+      plusX: guest?.plusX || 0,
     },
+    enableReinitialize: true,
     onSubmit: async (values) => {
       await upsertGuest({
         variables: {
-          input: { ...values, plusX: Number(values.plusX), weddingId: user?.wedding?.id! },
+          input: {
+            ...values,
+            plusX: Number(values.plusX),
+            weddingId: wedding.id,
+            id: guest?.id,
+          },
+        },
+        update: (cache, { data }) => {
+          const existingData = cache.readQuery({
+            query: GuestsDocument,
+          }) as GuestsQuery;
+          const updatedGuests = guest?.id
+            ? existingData.guests.map((guest) => {
+                if (guest.id === data?.upsertGuest.id) return data.upsertGuest;
+                return guest;
+              })
+            : [...existingData.guests, data?.upsertGuest];
+          cache.writeQuery({
+            query: GuestsDocument,
+            data: {
+              guests: updatedGuests,
+            },
+          });
+
+          router.push("/guests");
         },
       });
-
-      await refetchUser();
     },
   });
-
-  if (!user?.wedding) {
-    router.replace("/wedding");
-    return <></>;
-  }
 
   return (
     <main className="flex flex-col mt-16 w-2/5 mx-auto">

@@ -9,12 +9,12 @@ export const upsertWedding = mutationField("upsertWedding", {
     if (id) {
       return prisma.wedding.update({
         where: { id },
-        data: { ...input, users: { connect: { id: user?.id } } },
+        data: { ...input, authors: { connect: { id: user?.id } } },
       });
     }
 
     return prisma.wedding.create({
-      data: { ...input, users: { connect: { id: user?.id } } },
+      data: { ...input, authors: { connect: { id: user?.id } } },
     });
   },
 });

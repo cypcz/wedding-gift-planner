@@ -121,7 +121,10 @@ export interface NexusGenFieldTypes {
     upsertWedding: NexusGenRootTypes['Wedding']; // Wedding!
   }
   Query: { // field return type
+    guest: NexusGenRootTypes['Guest'] | null; // Guest
+    guests: NexusGenRootTypes['Guest'][]; // [Guest!]!
     me: NexusGenRootTypes['User'] | null; // User
+    wedding: NexusGenRootTypes['Wedding'] | null; // Wedding
   }
   User: { // field return type
     email: string; // String!
@@ -154,6 +157,11 @@ export interface NexusGenArgTypes {
     }
     upsertWedding: { // args
       input: NexusGenInputs['UpsertWeddingInput']; // UpsertWeddingInput!
+    }
+  }
+  Query: {
+    guest: { // args
+      id: string; // ID!
     }
   }
   Wedding: {

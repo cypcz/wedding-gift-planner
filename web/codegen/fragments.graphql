@@ -1,0 +1,16 @@
+fragment GuestInfo on Guest {
+  id
+  firstName
+  lastName
+  status
+  plusX
+  plusGuests
+  guestLink
+}
+
+fragment WeddingInfo on Wedding {
+  id
+  partner1Name
+  partner2Name
+  date
+}
