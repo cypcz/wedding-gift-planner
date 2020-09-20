@@ -1,5 +1,6 @@
 import { booleanArg, mutationField, stringArg } from "@nexus/schema";
 import { firebaseAdmin } from "../../firebase";
+import { sendRegisterEmail } from "./helpers";
 import { createSessionCookie } from "./utils";
 
 export const register = mutationField("register", {
@@ -8,9 +9,10 @@ export const register = mutationField("register", {
     email: stringArg({ required: true }),
     password: stringArg({ required: true }),
   },
-  async resolve(_root, { email, password }, { prisma }) {
+  async resolve(_root, { email, password }, { prisma, emailClient }) {
     const userRecord = await firebaseAdmin.createUser({ email, password });
     await prisma.user.create({ data: { id: userRecord.uid, email } });
+    await sendRegisterEmail(emailClient, email);
     return true;
   },
 });
@@ -22,7 +24,7 @@ export const login = mutationField("login", {
     csrfToken: stringArg({ required: true }),
     isProvider: booleanArg(),
   },
-  async resolve(_root, { idToken, csrfToken, isProvider }, { req, res, prisma }) {
+  async resolve(_root, { idToken, csrfToken, isProvider }, { req, res, prisma, emailClient }) {
     if (isProvider) {
       try {
         const decodedToken = await firebaseAdmin.verifyIdToken(idToken);
@@ -30,6 +32,7 @@ export const login = mutationField("login", {
 
         if (!user) {
           await prisma.user.create({ data: { id: decodedToken.uid, email: decodedToken.email! } });
+          await sendRegisterEmail(emailClient, decodedToken.email!);
         }
       } catch (e) {
         console.error(e);

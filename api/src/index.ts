@@ -1,3 +1,4 @@
+import sgMail from "@sendgrid/mail";
 import { ApolloServer } from "apollo-server-express";
 import cookieParser from "cookie-parser";
 import express from "express";
@@ -10,9 +11,11 @@ import { checkEnvVars } from "./utils";
 
 checkEnvVars();
 
+sgMail.setApiKey(process.env.SG_KEY!);
+
 const server = new ApolloServer({
   schema,
-  context: async ({ req, res }) => await createContext(req, res),
+  context: async ({ req, res }) => await createContext(req, res, sgMail),
   introspection: !__prod__,
   playground: !__prod__,
 });
