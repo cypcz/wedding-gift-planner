@@ -27,7 +27,7 @@ const Login = () => {
 
       if (idToken && csrfToken) {
         await login({
-          variables: { idToken, csrfToken },
+          variables: { input: { idToken, csrfToken } },
         });
         await refetchUser();
       }
