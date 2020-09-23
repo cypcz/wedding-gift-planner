@@ -53,10 +53,10 @@
   dependencies:
     cross-fetch "3.0.5"
 
-"@apollo/client@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.2.0.tgz#d16ea4384a2126bf60e7d87b0a6c6df00382220b"
-  integrity sha512-6ISMYW9QpEykJAkN6ZZteTkXXwtYSPGbh+4iBZ478p/Eox1JOMGYlqosGgMGv2oduug9SnsR65y0iCAxKOFGiQ==
+"@apollo/client@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.2.1.tgz#178dfcc1eb3a35052df8f2bd44be195b78f56e93"
+  integrity sha512-w1EdCf3lvSwsxG2zbn8Rm31nPh9gQrB7u61BnU1QCM5BNIfOxiuuldzGNMHi5kI9KleisFvZl/9OA7pEkVg/yw==
   dependencies:
     "@graphql-typed-document-node/core" "^3.0.0"
     "@types/zen-observable" "^0.8.0"
@@ -1901,10 +1901,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.15.tgz#fe1cc3aa465a3ea6858b793fd380b66c39919766"
   integrity sha512-kwbcs0jySLxzLsa2nWUAGOd/s21WU1jebrEdtzhsj1D4Yps1EOuyI1Qcu+FD56dL7NRNIJtDDjcqIG22NwkgLw==
 
-"@types/node@^14.11.1":
-  version "14.11.1"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.11.1.tgz#56af902ad157e763f9ba63d671c39cda3193c835"
-  integrity sha512-oTQgnd0hblfLsJ6BvJzzSL+Inogp3lq9fGgqRkMB/ziKMgEUaFl801OncOzUmalfzt14N0oPHMK47ipl+wbTIw==
+"@types/node@^14.11.2":
+  version "14.11.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.11.2.tgz#2de1ed6670439387da1c9f549a2ade2b0a799256"
+  integrity sha512-jiE3QIxJ8JLNcb1Ps6rDbysDhN4xa8DJJvuC9prr6w+1tIh+QAbYyNF3tyiZNLDBIuBCf4KEcV2UvQm/V60xfA==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
