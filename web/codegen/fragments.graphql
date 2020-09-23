@@ -5,14 +5,19 @@ fragment GuestInfo on Guest {
   status
   plusX
   plusGuests
-  guestLink
 }
 
 fragment WeddingInfo on Wedding {
   id
   partner1Name
   partner2Name
+  partnersEmail
   date
+  rsvpUntil
+  authors {
+    id
+    email
+  }
 }
 
 fragment ContributionInfo on GiftContribution {

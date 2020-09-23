@@ -6,9 +6,12 @@ export const Wedding = objectType({
     t.model.id();
     t.model.partner1Name();
     t.model.partner2Name();
+    t.model.partnersEmail();
     t.model.date();
+    t.model.rsvpUntil();
     t.model.gifts();
     t.model.guests();
+    t.model.authors();
   },
 });
 
@@ -20,5 +23,6 @@ export const UpsertWeddingInput = inputObjectType({
     t.string("partner2Name", { required: true });
     t.string("partnersEmail");
     t.field("date", { type: "DateTime", required: true });
+    t.field("rsvpUntil", { type: "DateTime", required: true });
   },
 });

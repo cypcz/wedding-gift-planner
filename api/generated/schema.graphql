@@ -46,7 +46,6 @@ input GiftWhereUniqueInput {
 
 type Guest {
   firstName: String!
-  guestLink: String!
   id: String!
   lastName: String!
   plusGuests: [String!]!
@@ -64,10 +63,18 @@ input GuestWhereUniqueInput {
   id: String
 }
 
+input LoginInput {
+  csrfToken: String!
+  idToken: String!
+  isProvider: Boolean
+  weddingId: String
+}
+
 type Mutation {
-  login(csrfToken: String!, idToken: String!, isProvider: Boolean): Boolean!
+  invitePartner(email: String!): Boolean!
+  login(input: LoginInput!): Boolean!
   logout: Boolean!
-  register(email: String!, password: String!): Boolean!
+  register(input: RegisterInput!): Boolean!
   upsertGift(input: UpsertGiftInput!): Gift!
   upsertGuest(input: UpsertGuestInput!): Guest!
   upsertWedding(input: UpsertWeddingInput!): Wedding!
@@ -80,6 +87,12 @@ type Query {
   guests: [Guest!]!
   me: User
   wedding: Wedding
+}
+
+input RegisterInput {
+  email: String!
+  password: String!
+  weddingId: String
 }
 
 input UpsertGiftInput {
@@ -107,6 +120,7 @@ input UpsertWeddingInput {
   partner1Name: String!
   partner2Name: String!
   partnersEmail: String
+  rsvpUntil: DateTime!
 }
 
 type User {
@@ -115,11 +129,19 @@ type User {
   wedding: Wedding
 }
 
+input UserWhereUniqueInput {
+  email: String
+  id: String
+}
+
 type Wedding {
+  authors(after: UserWhereUniqueInput, before: UserWhereUniqueInput, first: Int, last: Int): [User!]!
   date: DateTime!
   gifts(after: GiftWhereUniqueInput, before: GiftWhereUniqueInput, first: Int, last: Int): [Gift!]!
   guests(after: GuestWhereUniqueInput, before: GuestWhereUniqueInput, first: Int, last: Int): [Guest!]!
   id: String!
   partner1Name: String!
   partner2Name: String!
+  partnersEmail: String
+  rsvpUntil: DateTime!
 }

@@ -8,7 +8,6 @@ export const Guest = objectType({
     t.model.lastName();
     t.model.plusX();
     t.model.plusGuests();
-    t.model.guestLink();
     t.model.status();
   },
 });

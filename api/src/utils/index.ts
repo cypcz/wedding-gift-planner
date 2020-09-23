@@ -12,3 +12,6 @@ export const checkEnvVars = () => {
     throw new Error(`You are missing required environment variables: ${missingEnvVars}`);
   }
 };
+
+export const encodeInBase64 = (data: object) =>
+  Buffer.from(JSON.stringify(data)).toString("base64");

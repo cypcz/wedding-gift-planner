@@ -1,17 +1,22 @@
-import { booleanArg, mutationField, stringArg } from "@nexus/schema";
+import { arg, mutationField } from "@nexus/schema";
+import { sendRegisterEmail } from "../../emails";
 import { firebaseAdmin } from "../../firebase";
-import { sendRegisterEmail } from "./helpers";
 import { createSessionCookie } from "./utils";
 
 export const register = mutationField("register", {
   type: "Boolean",
   args: {
-    email: stringArg({ required: true }),
-    password: stringArg({ required: true }),
+    input: arg({ type: "RegisterInput", required: true }),
   },
-  async resolve(_root, { email, password }, { prisma, emailClient }) {
+  async resolve(_root, { input: { email, password, weddingId } }, { prisma, emailClient }) {
     const userRecord = await firebaseAdmin.createUser({ email, password });
-    await prisma.user.create({ data: { id: userRecord.uid, email } });
+    await prisma.user.create({
+      data: {
+        id: userRecord.uid,
+        email,
+        wedding: weddingId ? { connect: { id: weddingId } } : undefined,
+      },
+    });
     await sendRegisterEmail(emailClient, email);
     return true;
   },
@@ -20,18 +25,26 @@ export const register = mutationField("register", {
 export const login = mutationField("login", {
   type: "Boolean",
   args: {
-    idToken: stringArg({ required: true }),
-    csrfToken: stringArg({ required: true }),
-    isProvider: booleanArg(),
+    input: arg({ type: "LoginInput", required: true }),
   },
-  async resolve(_root, { idToken, csrfToken, isProvider }, { req, res, prisma, emailClient }) {
+  async resolve(
+    _root,
+    { input: { idToken, csrfToken, weddingId, isProvider } },
+    { req, res, prisma, emailClient }
+  ) {
     if (isProvider) {
       try {
         const decodedToken = await firebaseAdmin.verifyIdToken(idToken);
         const user = await prisma.user.findOne({ where: { id: decodedToken.uid } });
 
         if (!user) {
-          await prisma.user.create({ data: { id: decodedToken.uid, email: decodedToken.email! } });
+          await prisma.user.create({
+            data: {
+              id: decodedToken.uid,
+              email: decodedToken.email!,
+              wedding: weddingId ? { connect: { id: weddingId } } : undefined,
+            },
+          });
           await sendRegisterEmail(emailClient, decodedToken.email!);
         }
       } catch (e) {

@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { ButtonHTMLAttributes, DetailedHTMLProps, HTMLAttributes } from "react";
+import { UrlObject } from "url";
 
 interface Props {
   link?: boolean;
-  href?: string;
+  href?: string | UrlObject;
   className?: HTMLAttributes<HTMLElement>["className"];
 }
 

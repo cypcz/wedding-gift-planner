@@ -5,11 +5,15 @@ import Google from "@components/Icons/Google";
 import firebase from "@utils/firebase";
 import { UserContext } from "@utils/userContext";
 import { get as getCookie } from "js-cookie";
+import { useRouter } from "next/router";
 import { useContext } from "react";
 
 const Auth = () => {
   const [login] = useLoginMutation();
   const { refetchUser } = useContext(UserContext);
+  const router = useRouter();
+
+  const parsedQuery = router.query.data ? JSON.parse(atob(router.query.data as string)) : null;
 
   const handleProviderLogin = async (type: "fb" | "google") => {
     const provider =
@@ -28,7 +32,9 @@ const Auth = () => {
 
     if (idToken && csrfToken) {
       await login({
-        variables: { idToken, csrfToken, isProvider: true },
+        variables: {
+          input: { idToken, csrfToken, isProvider: true, weddingId: parsedQuery.weddingId },
+        },
       });
       await refetchUser();
     }
@@ -41,10 +47,12 @@ const Auth = () => {
          */}
         Please create your account or log in
       </h3>
-      <Button link href="/login" className="mb-4">
-        Log in
-      </Button>
-      <Button link href="/register">
+      {!router.query.data && (
+        <Button link href="/login" className="mb-4">
+          Log in
+        </Button>
+      )}
+      <Button link href={{ pathname: "/register", query: router.query }}>
         Create account
       </Button>
       <Dot className="h-2 w-2 my-6" />

@@ -33,7 +33,10 @@ const Guests: React.FC<Props> = ({ guests }) => {
     ),
     status: guest.status,
     link: (
-      <CopyToClipboard text={guest.guestLink} onCopy={() => console.log("copied")}>
+      <CopyToClipboard
+        text={`${location.origin}/invitation?id=${guest.id}`}
+        onCopy={() => console.log("copied")}
+      >
         <span>Click to copy invitation link</span>
       </CopyToClipboard>
     ),

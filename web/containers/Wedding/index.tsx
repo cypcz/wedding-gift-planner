@@ -11,7 +11,7 @@ const Wedding: React.FC<Props> = ({ wedding }) => {
   const [showProfile, setShowProfile] = useState(false);
 
   return !wedding ? (
-    <WeddingForm wedding={wedding} setShowProfile={setShowProfile} />
+    <WeddingForm setShowProfile={setShowProfile} />
   ) : showProfile ? (
     <WeddingForm wedding={wedding} setShowProfile={setShowProfile} />
   ) : (

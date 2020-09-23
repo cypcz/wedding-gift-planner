@@ -1,9 +1,9 @@
-mutation Login($idToken: String!, $csrfToken: String!, $isProvider: Boolean) {
-  login(idToken: $idToken, csrfToken: $csrfToken, isProvider: $isProvider)
+mutation Login($input: LoginInput!) {
+  login(input: $input)
 }
 
-mutation Register($email: String!, $password: String!) {
-  register(email: $email, password: $password)
+mutation Register($input: RegisterInput!) {
+  register(input: $input)
 }
 
 mutation Logout {
@@ -26,4 +26,8 @@ mutation UpsertGift($input: UpsertGiftInput!) {
   upsertGift(input: $input) {
     ...GiftInfo
   }
+}
+
+mutation InvitePartner($email: String!) {
+  invitePartner(email: $email)
 }

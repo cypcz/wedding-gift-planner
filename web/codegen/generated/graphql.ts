@@ -68,7 +68,6 @@ export type Guest = {
   lastName: Scalars['String'];
   plusX: Scalars['Int'];
   plusGuests: Array<Scalars['String']>;
-  guestLink: Scalars['String'];
   status: GuestStatus;
 };
 
@@ -87,14 +86,30 @@ export type User = {
   wedding?: Maybe<Wedding>;
 };
 
+export type RegisterInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+  weddingId?: Maybe<Scalars['String']>;
+};
+
+export type LoginInput = {
+  idToken: Scalars['String'];
+  csrfToken: Scalars['String'];
+  weddingId?: Maybe<Scalars['String']>;
+  isProvider?: Maybe<Scalars['Boolean']>;
+};
+
 export type Wedding = {
   __typename?: 'Wedding';
   id: Scalars['String'];
   partner1Name: Scalars['String'];
   partner2Name: Scalars['String'];
+  partnersEmail?: Maybe<Scalars['String']>;
   date: Scalars['DateTime'];
+  rsvpUntil: Scalars['DateTime'];
   gifts: Array<Gift>;
   guests: Array<Guest>;
+  authors: Array<User>;
 };
 
 
@@ -113,12 +128,21 @@ export type WeddingGuestsArgs = {
   after?: Maybe<GuestWhereUniqueInput>;
 };
 
+
+export type WeddingAuthorsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<UserWhereUniqueInput>;
+  after?: Maybe<UserWhereUniqueInput>;
+};
+
 export type UpsertWeddingInput = {
   id?: Maybe<Scalars['ID']>;
   partner1Name: Scalars['String'];
   partner2Name: Scalars['String'];
   partnersEmail?: Maybe<Scalars['String']>;
   date: Scalars['DateTime'];
+  rsvpUntil: Scalars['DateTime'];
 };
 
 export enum Currency {
@@ -152,6 +176,11 @@ export type GiftWhereUniqueInput = {
   id?: Maybe<Scalars['String']>;
 };
 
+export type UserWhereUniqueInput = {
+  id?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   gifts: Array<Gift>;
@@ -180,6 +209,7 @@ export type Mutation = {
   login: Scalars['Boolean'];
   logout: Scalars['Boolean'];
   upsertWedding: Wedding;
+  invitePartner: Scalars['Boolean'];
 };
 
 
@@ -194,15 +224,12 @@ export type MutationUpsertGuestArgs = {
 
 
 export type MutationRegisterArgs = {
-  email: Scalars['String'];
-  password: Scalars['String'];
+  input: RegisterInput;
 };
 
 
 export type MutationLoginArgs = {
-  idToken: Scalars['String'];
-  csrfToken: Scalars['String'];
-  isProvider?: Maybe<Scalars['Boolean']>;
+  input: LoginInput;
 };
 
 
@@ -210,14 +237,23 @@ export type MutationUpsertWeddingArgs = {
   input: UpsertWeddingInput;
 };
 
+
+export type MutationInvitePartnerArgs = {
+  email: Scalars['String'];
+};
+
 export type GuestInfoFragment = (
   { __typename?: 'Guest' }
-  & Pick<Guest, 'id' | 'firstName' | 'lastName' | 'status' | 'plusX' | 'plusGuests' | 'guestLink'>
+  & Pick<Guest, 'id' | 'firstName' | 'lastName' | 'status' | 'plusX' | 'plusGuests'>
 );
 
 export type WeddingInfoFragment = (
   { __typename?: 'Wedding' }
-  & Pick<Wedding, 'id' | 'partner1Name' | 'partner2Name' | 'date'>
+  & Pick<Wedding, 'id' | 'partner1Name' | 'partner2Name' | 'partnersEmail' | 'date' | 'rsvpUntil'>
+  & { authors: Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'email'>
+  )> }
 );
 
 export type ContributionInfoFragment = (
@@ -239,9 +275,7 @@ export type GiftInfoFragment = (
 );
 
 export type LoginMutationVariables = Exact<{
-  idToken: Scalars['String'];
-  csrfToken: Scalars['String'];
-  isProvider?: Maybe<Scalars['Boolean']>;
+  input: LoginInput;
 }>;
 
 
@@ -251,8 +285,7 @@ export type LoginMutation = (
 );
 
 export type RegisterMutationVariables = Exact<{
-  email: Scalars['String'];
-  password: Scalars['String'];
+  input: RegisterInput;
 }>;
 
 
@@ -306,6 +339,16 @@ export type UpsertGiftMutation = (
     { __typename?: 'Gift' }
     & GiftInfoFragment
   ) }
+);
+
+export type InvitePartnerMutationVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type InvitePartnerMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'invitePartner'>
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -386,7 +429,6 @@ export const GuestInfoFragmentDoc = gql`
   status
   plusX
   plusGuests
-  guestLink
 }
     `;
 export const WeddingInfoFragmentDoc = gql`
@@ -394,7 +436,13 @@ export const WeddingInfoFragmentDoc = gql`
   id
   partner1Name
   partner2Name
+  partnersEmail
   date
+  rsvpUntil
+  authors {
+    id
+    email
+  }
 }
     `;
 export const ContributionInfoFragmentDoc = gql`
@@ -425,8 +473,8 @@ export const GiftInfoFragmentDoc = gql`
 }
     ${ContributionInfoFragmentDoc}`;
 export const LoginDocument = gql`
-    mutation Login($idToken: String!, $csrfToken: String!, $isProvider: Boolean) {
-  login(idToken: $idToken, csrfToken: $csrfToken, isProvider: $isProvider)
+    mutation Login($input: LoginInput!) {
+  login(input: $input)
 }
     `;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
@@ -444,9 +492,7 @@ export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutati
  * @example
  * const [loginMutation, { data, loading, error }] = useLoginMutation({
  *   variables: {
- *      idToken: // value for 'idToken'
- *      csrfToken: // value for 'csrfToken'
- *      isProvider: // value for 'isProvider'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -457,8 +503,8 @@ export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const RegisterDocument = gql`
-    mutation Register($email: String!, $password: String!) {
-  register(email: $email, password: $password)
+    mutation Register($input: RegisterInput!) {
+  register(input: $input)
 }
     `;
 export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
@@ -476,8 +522,7 @@ export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, Regis
  * @example
  * const [registerMutation, { data, loading, error }] = useRegisterMutation({
  *   variables: {
- *      email: // value for 'email'
- *      password: // value for 'password'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -612,6 +657,36 @@ export function useUpsertGiftMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpsertGiftMutationHookResult = ReturnType<typeof useUpsertGiftMutation>;
 export type UpsertGiftMutationResult = Apollo.MutationResult<UpsertGiftMutation>;
 export type UpsertGiftMutationOptions = Apollo.BaseMutationOptions<UpsertGiftMutation, UpsertGiftMutationVariables>;
+export const InvitePartnerDocument = gql`
+    mutation InvitePartner($email: String!) {
+  invitePartner(email: $email)
+}
+    `;
+export type InvitePartnerMutationFn = Apollo.MutationFunction<InvitePartnerMutation, InvitePartnerMutationVariables>;
+
+/**
+ * __useInvitePartnerMutation__
+ *
+ * To run a mutation, you first call `useInvitePartnerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInvitePartnerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [invitePartnerMutation, { data, loading, error }] = useInvitePartnerMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useInvitePartnerMutation(baseOptions?: Apollo.MutationHookOptions<InvitePartnerMutation, InvitePartnerMutationVariables>) {
+        return Apollo.useMutation<InvitePartnerMutation, InvitePartnerMutationVariables>(InvitePartnerDocument, baseOptions);
+      }
+export type InvitePartnerMutationHookResult = ReturnType<typeof useInvitePartnerMutation>;
+export type InvitePartnerMutationResult = Apollo.MutationResult<InvitePartnerMutation>;
+export type InvitePartnerMutationOptions = Apollo.BaseMutationOptions<InvitePartnerMutation, InvitePartnerMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {

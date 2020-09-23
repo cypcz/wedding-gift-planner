@@ -6,19 +6,22 @@ import { UserContext } from "@utils/userContext";
 import { useFormik } from "formik";
 import { get as getCookie } from "js-cookie";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 
 const Register = () => {
   const [login] = useLoginMutation();
   const [registerMutation] = useRegisterMutation();
   const { refetchUser } = useContext(UserContext);
+  const router = useRouter();
   const [error, setError] = useState("");
+  const parsedQuery = router.query.data ? JSON.parse(atob(router.query.data as string)) : null;
   const { handleSubmit, handleChange, values } = useFormik({
-    initialValues: { email: "", password: "" },
+    initialValues: { email: parsedQuery.email || "", password: "" },
     onSubmit: async ({ email, password }) => {
       try {
         await registerMutation({
-          variables: { email, password },
+          variables: { input: { email, password, weddingId: parsedQuery.weddingId } },
         });
       } catch (e) {
         setError("Oops! Something went wrong!");
@@ -37,7 +40,7 @@ const Register = () => {
 
       if (idToken && csrfToken) {
         await login({
-          variables: { idToken, csrfToken },
+          variables: { input: { idToken, csrfToken } },
         });
         await refetchUser();
       }
@@ -75,7 +78,7 @@ const Register = () => {
         <div className="text-center font-corsiva text-xl mt-12">
           Oh no! That's not what you wanted?
         </div>
-        <Link href="/auth">
+        <Link href={{ pathname: "/auth", query: router.query }}>
           <div className="text-center font-corsiva text-xl underline cursor-pointer">Go back</div>
         </Link>
       </form>
