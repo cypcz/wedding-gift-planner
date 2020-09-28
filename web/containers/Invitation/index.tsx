@@ -17,7 +17,7 @@ const Invitation = () => {
   const [pageStatus, setPageStatus] = useState<PageStatus>("init");
   const id = router.query.id;
   const { data, loading, error } = useInvitationQuery({ variables: { id: id as string } });
-  const [respond, { loading: mutationLoading }] = useRespondToInvitationMutation();
+  const [respond] = useRespondToInvitationMutation();
 
   if (loading) {
     return <>loading..</>;
