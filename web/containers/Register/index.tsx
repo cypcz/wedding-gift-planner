@@ -7,14 +7,13 @@ import { useFormik } from "formik";
 import { get as getCookie } from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 
 const Register = () => {
   const [login] = useLoginMutation();
   const [registerMutation] = useRegisterMutation();
   const { refetchUser } = useContext(UserContext);
   const router = useRouter();
-  const [error, setError] = useState("");
   const parsedQuery = router.query.data ? JSON.parse(atob(router.query.data as string)) : null;
   const { handleSubmit, handleChange, values } = useFormik({
     initialValues: { email: parsedQuery.email || "", password: "" },
@@ -24,7 +23,7 @@ const Register = () => {
           variables: { input: { email, password, weddingId: parsedQuery.weddingId } },
         });
       } catch (e) {
-        setError("Oops! Something went wrong!");
+        //  setError("Oops! Something went wrong!");
         return;
       }
 
@@ -33,7 +32,7 @@ const Register = () => {
         const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
         idToken = await userCredential.user?.getIdToken();
       } catch (e) {
-        setError("Oops! Something went wrong!");
+        //  setError("Oops! Something went wrong!");
       }
 
       const csrfToken = getCookie("csrfToken");
