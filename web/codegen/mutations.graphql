@@ -31,3 +31,10 @@ mutation UpsertGift($input: UpsertGiftInput!) {
 mutation InvitePartner($email: String!) {
   invitePartner(email: $email)
 }
+
+mutation RespondToInvitation($id: ID!, $status: GuestStatus!) {
+  respondToInvitation(id: $id, status: $status) {
+    id
+    status
+  }
+}

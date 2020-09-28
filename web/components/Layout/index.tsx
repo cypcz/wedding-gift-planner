@@ -36,7 +36,9 @@ const Layout: React.FC<Props> = ({ children, heading }) => {
         <Dot className="h-2 w-2 my-6 mx-12" />
         <Branch transform="scale(-1, 1)" />
       </div>
-      {loading ? <div className="text-center">loading...</div> : children}
+      <main className="flex flex-col mt-16 w-1/5 mx-auto">
+        {loading ? <div className="text-center">loading...</div> : children}
+      </main>
       <footer>{user && <button onClick={handleLogout}>logout</button>}</footer>
     </div>
   );

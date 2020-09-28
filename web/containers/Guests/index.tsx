@@ -27,7 +27,7 @@ const Guests: React.FC<Props> = ({ guests }) => {
   const tableData = guests?.map((guest) => ({
     // Warning should be fixed in 9.5.4..
     name: (
-      <Link href={`/guest/${guest.id}`} /* prefetch={false} */>
+      <Link href={`/wedding/guests/${guest.id}`} /* prefetch={false} */>
         {`${guest.firstName} ${guest.lastName}`}
       </Link>
     ),
@@ -43,14 +43,14 @@ const Guests: React.FC<Props> = ({ guests }) => {
   }));
 
   return (
-    <main className="flex flex-col mt-16 w-2/5 mx-auto">
+    <>
       <h3 className="flex font-corsiva justify-center mb-4 text-4xl">Guests</h3>
       <div className="text-center font-corsiva text-xl mb-8">Total guests: {guests?.length}</div>
       <Table columns={columns} data={tableData} />
-      <BigButton link href="/guest-new">
+      <BigButton link href="/guests/new">
         New Guest
       </BigButton>
-    </main>
+    </>
   );
 };
 

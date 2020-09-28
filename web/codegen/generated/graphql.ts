@@ -69,6 +69,7 @@ export type Guest = {
   plusX: Scalars['Int'];
   plusGuests: Array<Scalars['String']>;
   status: GuestStatus;
+  wedding: Wedding;
 };
 
 export type UpsertGuestInput = {
@@ -107,6 +108,7 @@ export type Wedding = {
   partnersEmail?: Maybe<Scalars['String']>;
   date: Scalars['DateTime'];
   rsvpUntil: Scalars['DateTime'];
+  location: Scalars['String'];
   gifts: Array<Gift>;
   guests: Array<Guest>;
   authors: Array<User>;
@@ -140,6 +142,7 @@ export type UpsertWeddingInput = {
   id?: Maybe<Scalars['ID']>;
   partner1Name: Scalars['String'];
   partner2Name: Scalars['String'];
+  location: Scalars['String'];
   partnersEmail?: Maybe<Scalars['String']>;
   date: Scalars['DateTime'];
   rsvpUntil: Scalars['DateTime'];
@@ -168,7 +171,7 @@ export type GuestWhereUniqueInput = {
 export enum GuestStatus {
   Waiting = 'WAITING',
   Accepted = 'ACCEPTED',
-  Rejected = 'REJECTED'
+  Declined = 'DECLINED'
 }
 
 
@@ -187,6 +190,7 @@ export type Query = {
   gift?: Maybe<Gift>;
   guests: Array<Guest>;
   guest?: Maybe<Guest>;
+  guestInvitation?: Maybe<Guest>;
   me?: Maybe<User>;
   wedding?: Maybe<Wedding>;
 };
@@ -201,10 +205,16 @@ export type QueryGuestArgs = {
   id: Scalars['ID'];
 };
 
+
+export type QueryGuestInvitationArgs = {
+  id: Scalars['ID'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   upsertGift: Gift;
   upsertGuest: Guest;
+  respondToInvitation: Guest;
   register: Scalars['Boolean'];
   login: Scalars['Boolean'];
   logout: Scalars['Boolean'];
@@ -220,6 +230,12 @@ export type MutationUpsertGiftArgs = {
 
 export type MutationUpsertGuestArgs = {
   input: UpsertGuestInput;
+};
+
+
+export type MutationRespondToInvitationArgs = {
+  id: Scalars['ID'];
+  status: GuestStatus;
 };
 
 
@@ -249,7 +265,7 @@ export type GuestInfoFragment = (
 
 export type WeddingInfoFragment = (
   { __typename?: 'Wedding' }
-  & Pick<Wedding, 'id' | 'partner1Name' | 'partner2Name' | 'partnersEmail' | 'date' | 'rsvpUntil'>
+  & Pick<Wedding, 'id' | 'partner1Name' | 'partner2Name' | 'location' | 'partnersEmail' | 'date' | 'rsvpUntil'>
   & { authors: Array<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'email'>
@@ -351,6 +367,20 @@ export type InvitePartnerMutation = (
   & Pick<Mutation, 'invitePartner'>
 );
 
+export type RespondToInvitationMutationVariables = Exact<{
+  id: Scalars['ID'];
+  status: GuestStatus;
+}>;
+
+
+export type RespondToInvitationMutation = (
+  { __typename?: 'Mutation' }
+  & { respondToInvitation: (
+    { __typename?: 'Guest' }
+    & Pick<Guest, 'id' | 'status'>
+  ) }
+);
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -421,6 +451,27 @@ export type GiftQuery = (
   )> }
 );
 
+export type InvitationQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type InvitationQuery = (
+  { __typename?: 'Query' }
+  & { guestInvitation?: Maybe<(
+    { __typename?: 'Guest' }
+    & Pick<Guest, 'id' | 'firstName' | 'lastName' | 'status' | 'plusX' | 'plusGuests'>
+    & { wedding: (
+      { __typename?: 'Wedding' }
+      & Pick<Wedding, 'id' | 'date' | 'rsvpUntil' | 'partner1Name' | 'partner2Name' | 'location'>
+      & { gifts: Array<(
+        { __typename?: 'Gift' }
+        & Pick<Gift, 'id' | 'name' | 'price' | 'currency' | 'link' | 'imgUrl'>
+      )> }
+    ) }
+  )> }
+);
+
 export const GuestInfoFragmentDoc = gql`
     fragment GuestInfo on Guest {
   id
@@ -436,6 +487,7 @@ export const WeddingInfoFragmentDoc = gql`
   id
   partner1Name
   partner2Name
+  location
   partnersEmail
   date
   rsvpUntil
@@ -687,6 +739,40 @@ export function useInvitePartnerMutation(baseOptions?: Apollo.MutationHookOption
 export type InvitePartnerMutationHookResult = ReturnType<typeof useInvitePartnerMutation>;
 export type InvitePartnerMutationResult = Apollo.MutationResult<InvitePartnerMutation>;
 export type InvitePartnerMutationOptions = Apollo.BaseMutationOptions<InvitePartnerMutation, InvitePartnerMutationVariables>;
+export const RespondToInvitationDocument = gql`
+    mutation RespondToInvitation($id: ID!, $status: GuestStatus!) {
+  respondToInvitation(id: $id, status: $status) {
+    id
+    status
+  }
+}
+    `;
+export type RespondToInvitationMutationFn = Apollo.MutationFunction<RespondToInvitationMutation, RespondToInvitationMutationVariables>;
+
+/**
+ * __useRespondToInvitationMutation__
+ *
+ * To run a mutation, you first call `useRespondToInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRespondToInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [respondToInvitationMutation, { data, loading, error }] = useRespondToInvitationMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      status: // value for 'status'
+ *   },
+ * });
+ */
+export function useRespondToInvitationMutation(baseOptions?: Apollo.MutationHookOptions<RespondToInvitationMutation, RespondToInvitationMutationVariables>) {
+        return Apollo.useMutation<RespondToInvitationMutation, RespondToInvitationMutationVariables>(RespondToInvitationDocument, baseOptions);
+      }
+export type RespondToInvitationMutationHookResult = ReturnType<typeof useRespondToInvitationMutation>;
+export type RespondToInvitationMutationResult = Apollo.MutationResult<RespondToInvitationMutation>;
+export type RespondToInvitationMutationOptions = Apollo.BaseMutationOptions<RespondToInvitationMutation, RespondToInvitationMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -882,3 +968,57 @@ export function useGiftLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GiftQ
 export type GiftQueryHookResult = ReturnType<typeof useGiftQuery>;
 export type GiftLazyQueryHookResult = ReturnType<typeof useGiftLazyQuery>;
 export type GiftQueryResult = Apollo.QueryResult<GiftQuery, GiftQueryVariables>;
+export const InvitationDocument = gql`
+    query Invitation($id: ID!) {
+  guestInvitation(id: $id) {
+    id
+    firstName
+    lastName
+    status
+    plusX
+    plusGuests
+    wedding {
+      id
+      date
+      rsvpUntil
+      partner1Name
+      partner2Name
+      location
+      gifts {
+        id
+        name
+        price
+        currency
+        link
+        imgUrl
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useInvitationQuery__
+ *
+ * To run a query within a React component, call `useInvitationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useInvitationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useInvitationQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useInvitationQuery(baseOptions?: Apollo.QueryHookOptions<InvitationQuery, InvitationQueryVariables>) {
+        return Apollo.useQuery<InvitationQuery, InvitationQueryVariables>(InvitationDocument, baseOptions);
+      }
+export function useInvitationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InvitationQuery, InvitationQueryVariables>) {
+          return Apollo.useLazyQuery<InvitationQuery, InvitationQueryVariables>(InvitationDocument, baseOptions);
+        }
+export type InvitationQueryHookResult = ReturnType<typeof useInvitationQuery>;
+export type InvitationLazyQueryHookResult = ReturnType<typeof useInvitationLazyQuery>;
+export type InvitationQueryResult = Apollo.QueryResult<InvitationQuery, InvitationQueryVariables>;

@@ -1,0 +1,22 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "UpdateEnum",
+      "enum": "GuestStatus",
+      "createdValues": [
+        "DECLINED"
+      ],
+      "deletedValues": [
+        "REJECTED"
+      ]
+    },
+    {
+      "tag": "CreateField",
+      "model": "Wedding",
+      "field": "location",
+      "type": "String",
+      "arity": "Required"
+    }
+  ]
+}

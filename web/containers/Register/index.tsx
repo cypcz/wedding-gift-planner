@@ -48,9 +48,8 @@ const Register = () => {
   });
 
   return (
-    <main className="flex flex-col mt-16 w-1/5 mx-auto">
+    <>
       <form onSubmit={handleSubmit}>
-        <div className="text-center text-error font-corsiva text-xl mb-12">{error}</div>
         <h3 className="font-corsiva text-center mb-10 text-2xl">Create Account</h3>
         <div className="my-1 flex flex-col items-center">
           <Input name="email" placeholder="email" onChange={handleChange} value={values.email} />
@@ -82,7 +81,7 @@ const Register = () => {
           <div className="text-center font-corsiva text-xl underline cursor-pointer">Go back</div>
         </Link>
       </form>
-    </main>
+    </>
   );
 };
 

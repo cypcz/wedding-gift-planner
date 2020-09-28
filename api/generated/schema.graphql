@@ -51,11 +51,12 @@ type Guest {
   plusGuests: [String!]!
   plusX: Int!
   status: GuestStatus!
+  wedding: Wedding!
 }
 
 enum GuestStatus {
   ACCEPTED
-  REJECTED
+  DECLINED
   WAITING
 }
 
@@ -75,6 +76,7 @@ type Mutation {
   login(input: LoginInput!): Boolean!
   logout: Boolean!
   register(input: RegisterInput!): Boolean!
+  respondToInvitation(id: ID!, status: GuestStatus!): Guest!
   upsertGift(input: UpsertGiftInput!): Gift!
   upsertGuest(input: UpsertGuestInput!): Guest!
   upsertWedding(input: UpsertWeddingInput!): Wedding!
@@ -84,6 +86,7 @@ type Query {
   gift(id: ID!): Gift
   gifts: [Gift!]!
   guest(id: ID!): Guest
+  guestInvitation(id: ID!): Guest
   guests: [Guest!]!
   me: User
   wedding: Wedding
@@ -117,6 +120,7 @@ input UpsertGuestInput {
 input UpsertWeddingInput {
   date: DateTime!
   id: ID
+  location: String!
   partner1Name: String!
   partner2Name: String!
   partnersEmail: String
@@ -140,6 +144,7 @@ type Wedding {
   gifts(after: GiftWhereUniqueInput, before: GiftWhereUniqueInput, first: Int, last: Int): [Gift!]!
   guests(after: GuestWhereUniqueInput, before: GuestWhereUniqueInput, first: Int, last: Int): [Guest!]!
   id: String!
+  location: String!
   partner1Name: String!
   partner2Name: String!
   partnersEmail: String

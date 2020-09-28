@@ -11,6 +11,7 @@ fragment WeddingInfo on Wedding {
   id
   partner1Name
   partner2Name
+  location
   partnersEmail
   date
   rsvpUntil

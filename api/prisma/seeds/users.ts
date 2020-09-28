@@ -1,6 +1,6 @@
 import { PrismaClient, UserCreateInput } from "@prisma/client";
 
-export const USER_1 = "UVRgDAyBCHOEJb0pPhr3PyT2Rtb2";
+export const USER_1 = "vCvbQpkD1oPOIFHETpIRtH9Btph1";
 
 const users: UserCreateInput[] = [
   {

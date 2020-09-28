@@ -59,7 +59,7 @@ const GuestForm: React.FC<Props> = ({ wedding, guest, router }) => {
   });
 
   return (
-    <main className="flex flex-col mt-16 w-2/5 mx-auto">
+    <>
       <form onSubmit={handleSubmit}>
         <h3 className="font-corsiva text-center mb-4 text-2xl">New Guest</h3>
         <div className="flex justify-evenly">
@@ -91,7 +91,7 @@ const GuestForm: React.FC<Props> = ({ wedding, guest, router }) => {
           </div>
         </button>
       </form>
-    </main>
+    </>
   );
 };
 

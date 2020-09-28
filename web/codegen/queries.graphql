@@ -34,3 +34,30 @@ query Gift($id: ID!) {
     ...GiftInfo
   }
 }
+
+query Invitation($id: ID!) {
+  guestInvitation(id: $id) {
+    id
+    firstName
+    lastName
+    status
+    plusX
+    plusGuests
+    wedding {
+      id
+      date
+      rsvpUntil
+      partner1Name
+      partner2Name
+      location
+      gifts {
+        id
+        name
+        price
+        currency
+        link
+        imgUrl
+      }
+    }
+  }
+}

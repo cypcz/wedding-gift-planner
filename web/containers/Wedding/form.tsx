@@ -28,6 +28,7 @@ const WeddingForm: React.FC<Props> = ({ setShowProfile, wedding }) => {
       partner1Name: wedding?.partner1Name || "",
       partner2Name: wedding?.partner2Name || "",
       partnersEmail: partnersEmail || wedding?.partnersEmail || "",
+      location: wedding?.location || "",
       date: wedding?.date ? parseISO(wedding.date) : undefined,
       rsvpUntil: wedding?.rsvpUntil ? parseISO(wedding.rsvpUntil) : undefined,
     },
@@ -57,7 +58,7 @@ const WeddingForm: React.FC<Props> = ({ setShowProfile, wedding }) => {
   });
 
   return (
-    <main className="flex flex-col mt-16 w-2/5 mx-auto">
+    <>
       <form onSubmit={handleSubmit}>
         <h3 className="font-corsiva text-center mb-4 text-2xl">Please tell us your first names</h3>
         <div className="flex justify-evenly">
@@ -79,6 +80,13 @@ const WeddingForm: React.FC<Props> = ({ setShowProfile, wedding }) => {
           Select a date of your Wedding
         </h3>
         <DatePicker selected={values.date} onChange={(date) => setFieldValue("date", date)} />
+        <h3 className="font-corsiva text-center mb-4 text-2xl">Location</h3>
+        <Input
+          className="w-2/3 flex my-0 mx-auto"
+          name="location"
+          onChange={handleChange}
+          value={values.location}
+        />
         <h3 className="font-corsiva text-center mt-8 mb-4 text-2xl">
           Guests can accept or refuse invitation until
         </h3>
@@ -107,20 +115,22 @@ const WeddingForm: React.FC<Props> = ({ setShowProfile, wedding }) => {
             Invite partner
           </button>
         )}
-        <button
-          className="flex flex-col items-center mx-auto focus:outline-none"
-          onClick={(e) => {
-            e.preventDefault();
-            setShowProfile(false);
-          }}
-        >
-          <span className="font-corsiva text-3xl">Go back</span>
-          <div className="flex">
-            <Dot className="h-1 w-1" />
-            <Dot className="h-1 w-1 mx-2" />
-            <Dot className="h-1 w-1" />
-          </div>
-        </button>
+        {wedding && (
+          <button
+            className="flex flex-col items-center mx-auto focus:outline-none"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowProfile(false);
+            }}
+          >
+            <span className="font-corsiva text-3xl">Go back</span>
+            <div className="flex">
+              <Dot className="h-1 w-1" />
+              <Dot className="h-1 w-1 mx-2" />
+              <Dot className="h-1 w-1" />
+            </div>
+          </button>
+        )}
         <button className="flex flex-col items-center mx-auto focus:outline-none" type="submit">
           <span className="font-corsiva text-3xl">Proceed</span>
           <div className="flex">
@@ -130,7 +140,7 @@ const WeddingForm: React.FC<Props> = ({ setShowProfile, wedding }) => {
           </div>
         </button>
       </form>
-    </main>
+    </>
   );
 };
 

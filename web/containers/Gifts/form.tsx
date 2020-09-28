@@ -62,7 +62,7 @@ const GiftForm: React.FC<Props> = ({ wedding, gift, router }) => {
   });
 
   return (
-    <main className="flex flex-col mt-16 w-2/5 mx-auto">
+    <>
       <form onSubmit={handleSubmit}>
         <h3 className="font-corsiva text-center mb-4 text-2xl">New Gift</h3>
         <Input name="link" placeholder="Link" onChange={handleChange} value={values.link} />
@@ -84,7 +84,7 @@ const GiftForm: React.FC<Props> = ({ wedding, gift, router }) => {
           </div>
         </button>
       </form>
-    </main>
+    </>
   );
 };
 

@@ -33,7 +33,7 @@ const Auth = () => {
     if (idToken && csrfToken) {
       await login({
         variables: {
-          input: { idToken, csrfToken, isProvider: true, weddingId: parsedQuery.weddingId },
+          input: { idToken, csrfToken, isProvider: true, weddingId: parsedQuery?.weddingId },
         },
       });
       await refetchUser();
@@ -41,7 +41,7 @@ const Auth = () => {
   };
 
   return (
-    <main className="flex flex-col mt-16 w-1/5 mx-auto">
+    <>
       <h3 className="font-corsiva text-center mt-16 mb-10 text-2xl">
         {/*         <Branch transform="scale(1, -1)" />
          */}
@@ -65,7 +65,7 @@ const Auth = () => {
         <span>Log in with Facebook</span>
       </Button>
       <Branch transform="scale(-1, 1)" /> */}
-    </main>
+    </>
   );
 };
 

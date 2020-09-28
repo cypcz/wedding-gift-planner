@@ -35,7 +35,7 @@ const Login = () => {
   });
 
   return (
-    <main className="flex flex-col mt-16 w-1/5 mx-auto">
+    <>
       <form onSubmit={handleSubmit}>
         <div className="text-center text-error font-corsiva text-xl mb-12">{error}</div>
         <h3 className="font-corsiva text-center mb-10 text-2xl">Log in</h3>
@@ -71,7 +71,7 @@ const Login = () => {
           <div className="text-center font-corsiva text-xl underline cursor-pointer">Go back</div>
         </Link>
       </form>
-    </main>
+    </>
   );
 };
 

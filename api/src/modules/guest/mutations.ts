@@ -1,4 +1,4 @@
-import { arg, mutationField } from "@nexus/schema";
+import { arg, idArg, mutationField } from "@nexus/schema";
 import cuid from "cuid";
 
 export const upsertGuest = mutationField("upsertGuest", {
@@ -17,6 +17,20 @@ export const upsertGuest = mutationField("upsertGuest", {
         lastName,
       },
       update: { plusX: plusX || undefined, firstName, lastName },
+    });
+  },
+});
+
+export const respondToInvitation = mutationField("respondToInvitation", {
+  type: "Guest",
+  args: {
+    id: idArg({ required: true }),
+    status: arg({ type: "GuestStatus", required: true }),
+  },
+  async resolve(_root, { id, status }, { prisma }) {
+    return prisma.guest.update({
+      where: { id },
+      data: { status },
     });
   },
 });

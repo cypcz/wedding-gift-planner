@@ -20,3 +20,14 @@ export const guest = queryField("guest", {
     return prisma.guest.findOne({ where: { id } });
   },
 });
+
+export const guestInvitation = queryField("guestInvitation", {
+  type: "Guest",
+  nullable: true,
+  args: {
+    id: idArg({ required: true }),
+  },
+  async resolve(_root, { id }, { prisma }) {
+    return prisma.guest.findOne({ where: { id } });
+  },
+});
