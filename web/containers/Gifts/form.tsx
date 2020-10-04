@@ -55,7 +55,7 @@ const GiftForm: React.FC<Props> = ({ wedding, gift, router }) => {
             },
           });
 
-          router.push("/gifts");
+          router.push("/wedding/gifts");
         },
       });
     },

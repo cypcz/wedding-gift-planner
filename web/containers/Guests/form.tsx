@@ -52,7 +52,7 @@ const GuestForm: React.FC<Props> = ({ wedding, guest, router }) => {
             },
           });
 
-          router.push("/guests");
+          router.push("/wedding/guests");
         },
       });
     },
