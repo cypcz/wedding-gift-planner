@@ -25,7 +25,7 @@ const Gifts: React.FC<Props> = ({ gifts }) => {
       <h3 className="flex font-corsiva justify-center mb-4 text-4xl">Gifts</h3>
       <div className="text-center font-corsiva text-xl mb-8">Total gifts: {gifts?.length}</div>
       <Table columns={columns} data={tableData} />
-      <BigButton link href="/gifts/new">
+      <BigButton link href="/wedding/gifts/new">
         New Gift
       </BigButton>
     </>

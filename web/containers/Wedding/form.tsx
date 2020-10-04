@@ -8,6 +8,7 @@ import {
 import DatePicker from "@components/DatePicker";
 import Dot from "@components/Dot";
 import Input from "@components/Input";
+import { successToast } from "@components/Toast";
 import { UserContext } from "@utils/userContext";
 import { parseISO } from "date-fns";
 import { useFormik } from "formik";
@@ -53,7 +54,12 @@ const WeddingForm: React.FC<Props> = ({ setShowProfile, wedding }) => {
         },
       });
 
-      if (wedding?.id) setShowProfile(false);
+      if (wedding?.id) {
+        successToast("Wedding updated!");
+        setShowProfile(false);
+      } else {
+        successToast("Wedding created!");
+      }
     },
   });
 

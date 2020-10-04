@@ -17,7 +17,7 @@ const WeddingPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <PrivateRoute>
-        <Wedding wedding={data?.wedding || undefined} />
+        <Wedding wedding={data?.wedding} />
       </PrivateRoute>
     </>
   );

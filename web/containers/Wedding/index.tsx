@@ -4,7 +4,7 @@ import { useState } from "react";
 import WeddingForm from "./form";
 
 interface Props {
-  wedding?: WeddingInfoFragment;
+  wedding?: WeddingInfoFragment | null;
 }
 
 const Wedding: React.FC<Props> = ({ wedding }) => {

@@ -47,7 +47,7 @@ const Guests: React.FC<Props> = ({ guests }) => {
       <h3 className="flex font-corsiva justify-center mb-4 text-4xl">Guests</h3>
       <div className="text-center font-corsiva text-xl mb-8">Total guests: {guests?.length}</div>
       <Table columns={columns} data={tableData} />
-      <BigButton link href="/guests/new">
+      <BigButton link href="/wedding/guests/new">
         New Guest
       </BigButton>
     </>
