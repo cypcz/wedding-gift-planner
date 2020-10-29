@@ -1,4 +1,5 @@
 import { useWeddingQuery } from "@codegen/generated/graphql";
+import Logo from "@components/Icons/Logo";
 import PrivateRoute from "@components/PrivateRoute";
 import Wedding from "@containers/Wedding";
 import Head from "next/head";
@@ -7,7 +8,7 @@ const WeddingPage = () => {
   const { data, loading } = useWeddingQuery();
 
   if (loading) {
-    return <>loading...</>;
+    return <Logo className="animate-ping" />;
   }
 
   return (

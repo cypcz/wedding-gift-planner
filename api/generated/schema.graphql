@@ -72,22 +72,22 @@ input LoginInput {
 }
 
 type Mutation {
-  invitePartner(email: String!): Boolean!
-  login(input: LoginInput!): Boolean!
-  logout: Boolean!
-  register(input: RegisterInput!): Boolean!
-  respondToInvitation(id: ID!, status: GuestStatus!): Guest!
-  upsertGift(input: UpsertGiftInput!): Gift!
-  upsertGuest(input: UpsertGuestInput!): Guest!
-  upsertWedding(input: UpsertWeddingInput!): Wedding!
+  invitePartner(email: String!): Boolean
+  login(input: LoginInput!): Boolean
+  logout: Boolean
+  register(input: RegisterInput!): Boolean
+  respondToInvitation(id: ID!, status: GuestStatus!): Guest
+  upsertGift(input: UpsertGiftInput!): Gift
+  upsertGuest(input: UpsertGuestInput!): Guest
+  upsertWedding(input: UpsertWeddingInput!): Wedding
 }
 
 type Query {
   gift(id: ID!): Gift
-  gifts: [Gift!]!
+  gifts: [Gift]
   guest(id: ID!): Guest
   guestInvitation(id: ID!): Guest
-  guests: [Guest!]!
+  guests: [Guest]
   me: User
   wedding: Wedding
 }

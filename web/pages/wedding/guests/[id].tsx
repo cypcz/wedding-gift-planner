@@ -1,6 +1,8 @@
 import { useGuestLazyQuery, useWeddingQuery } from "@codegen/generated/graphql";
+import Logo from "@components/Icons/Logo";
 import PrivateRoute from "@components/PrivateRoute";
 import GuestForm from "@containers/Guests/form";
+import { Routes } from "@utils/constants";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -18,12 +20,12 @@ const GuestPage = () => {
   }, []);
 
   if (weddingLoading || loading) {
-    return <>loading...</>;
+    return <Logo className="animate-ping" />;
   }
 
   if (!weddingData?.wedding) {
-    router.replace("/wedding");
-    return <></>;
+    router.replace(Routes.WEDDING.path);
+    return <Logo className="animate-ping" />;
   }
 
   return (
@@ -33,7 +35,7 @@ const GuestPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <PrivateRoute>
-        <GuestForm wedding={weddingData.wedding} guest={data?.guest || undefined} router={router} />
+        <GuestForm wedding={weddingData.wedding} guest={data?.guest} router={router} />
       </PrivateRoute>
     </>
   );

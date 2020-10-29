@@ -14,7 +14,7 @@ module.exports = {
       },
       colors: {
         bg: "#FAF6F1",
-        secondary: "#8F8686",
+        secondary: "#D6BD7F",
         input: "#373232",
         error: "#E15F5F",
       },
@@ -28,6 +28,24 @@ module.exports = {
       borderWidth: {
         1: "1px",
         12: "12px",
+      },
+      minWidth: {
+        '1/5': '20%'
+      },
+      keyframes: {
+        dotLoading: {
+          "0%": {
+            backgroundColor: "#373232"
+          },
+          "50%, 100%": {
+            backgroundColor: "#D6BD7F"
+          }
+        },
+      },
+      animation: {
+        dotLoading1: 'dotLoading 1s 0.1s infinite alternate',
+        dotLoading2: 'dotLoading 1s 0.6s infinite alternate',
+        dotLoading3: 'dotLoading 1s 1.1s infinite alternate',
       },
     },
   },

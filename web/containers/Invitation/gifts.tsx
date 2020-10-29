@@ -1,4 +1,6 @@
 import { useInvitationQuery } from "@codegen/generated/graphql";
+import Logo from "@components/Icons/Logo";
+import { Routes } from "@utils/constants";
 import { useRouter } from "next/router";
 
 const InvitationGifts = () => {
@@ -7,12 +9,12 @@ const InvitationGifts = () => {
   const { data, loading, error } = useInvitationQuery({ variables: { id: id as string } });
 
   if (loading) {
-    return <>loading..</>;
+    return <Logo className="animate-ping" />;
   }
 
   if (error) {
-    router.replace("/auth");
-    return <></>;
+    router.replace(Routes.AUTH.path);
+    return <Logo className="animate-ping" />;
   }
 
   const gifts = data?.guestInvitation?.wedding.gifts;

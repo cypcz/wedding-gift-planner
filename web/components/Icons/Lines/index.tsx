@@ -8,7 +8,7 @@ const Lines: React.FC<Props> = ({ className }) => {
   return (
     <svg
       className={className}
-      width="50%"
+      width="20%"
       height="50%"
       viewBox="0 0 102 566"
       fill="none"

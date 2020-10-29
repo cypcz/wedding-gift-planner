@@ -1,7 +1,8 @@
 import { useLoginMutation } from "@codegen/generated/graphql";
-import Button from "@components/Button";
+import Button from "@components/Buttons/Button";
 import Dot from "@components/Dot";
 import Google from "@components/Icons/Google";
+import { Routes } from "@utils/constants";
 import firebase from "@utils/firebase";
 import { UserContext } from "@utils/userContext";
 import { get as getCookie } from "js-cookie";
@@ -48,11 +49,11 @@ const Auth = () => {
         Please create your account or log in
       </h3>
       {!router.query.data && (
-        <Button link href="/login" className="mb-4">
+        <Button link href={Routes.LOGIN.path} className="mb-4">
           Log in
         </Button>
       )}
-      <Button link href={{ pathname: "/register", query: router.query }}>
+      <Button link href={{ pathname: Routes.REGISTER.path, query: router.query }}>
         Create account
       </Button>
       <Dot className="h-2 w-2 my-6" />

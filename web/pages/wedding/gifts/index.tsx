@@ -1,6 +1,8 @@
 import { useGiftsQuery, useWeddingQuery } from "@codegen/generated/graphql";
+import Logo from "@components/Icons/Logo";
 import PrivateRoute from "@components/PrivateRoute";
 import Gifts from "@containers/Gifts";
+import { Routes } from "@utils/constants";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
@@ -10,12 +12,12 @@ const GiftsPage = () => {
   const { data, loading } = useGiftsQuery();
 
   if (weddingLoading || loading) {
-    return <>loading...</>;
+    return <Logo className="animate-ping" />;
   }
 
   if (!weddingData?.wedding) {
-    router.replace("/wedding");
-    return <></>;
+    router.replace(Routes.WEDDING.path);
+    return <Logo className="animate-ping" />;
   }
 
   return (

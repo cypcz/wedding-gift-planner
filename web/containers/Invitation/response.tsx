@@ -1,5 +1,7 @@
 import { GuestStatus, useInvitationQuery } from "@codegen/generated/graphql";
-import Dot from "@components/Dot";
+import SubmitButton from "@components/Buttons/SubmitButton";
+import Logo from "@components/Icons/Logo";
+import { Routes } from "@utils/constants";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -10,12 +12,12 @@ const InvitationResponse = () => {
   const { data, loading, error } = useInvitationQuery({ variables: { id: id as string } });
 
   if (loading) {
-    return <>loading..</>;
+    return <Logo className="animate-ping" />;
   }
 
   if (error) {
-    router.replace("/auth");
-    return <></>;
+    router.replace(Routes.AUTH.path);
+    return <Logo className="animate-ping" />;
   }
 
   const invitation = data?.guestInvitation;
@@ -24,17 +26,7 @@ const InvitationResponse = () => {
   return isGoodbye ? (
     <>
       <h3 className="font-corsiva text-center mb-4 text-2xl">Thank you anyway!</h3>
-      <button
-        className="flex flex-col items-center mx-auto focus:outline-none"
-        onClick={() => setGoodbye(false)}
-      >
-        <span className="font-corsiva text-3xl">I changed my mind!</span>
-        <div className="flex">
-          <Dot className="h-1 w-1" />
-          <Dot className="h-1 w-1 mx-2" />
-          <Dot className="h-1 w-1" />
-        </div>
-      </button>
+      <SubmitButton onClick={() => setGoodbye(false)}>I changed my mind!</SubmitButton>
     </>
   ) : (
     <>
@@ -46,28 +38,14 @@ const InvitationResponse = () => {
       </h3>
       <h3 className="font-corsiva text-center mb-4 text-2xl">Would you like to send us a gift?</h3>
       <div className="flex">
-        <button
-          className="flex flex-col items-center mx-auto focus:outline-none"
-          onClick={() => router.push({ pathname: "/invitation/gifts", query: router.query })}
+        <SubmitButton
+          onClick={() =>
+            router.push({ pathname: Routes.INVITATION_GIFTS.path, query: router.query })
+          }
         >
-          <span className="font-corsiva text-3xl">Yes, please!</span>
-          <div className="flex">
-            <Dot className="h-1 w-1" />
-            <Dot className="h-1 w-1 mx-2" />
-            <Dot className="h-1 w-1" />
-          </div>
-        </button>
-        <button
-          className="flex flex-col items-center mx-auto focus:outline-none"
-          onClick={() => setGoodbye(true)}
-        >
-          <span className="font-corsiva text-3xl">No, I'm good.</span>
-          <div className="flex">
-            <Dot className="h-1 w-1" />
-            <Dot className="h-1 w-1 mx-2" />
-            <Dot className="h-1 w-1" />
-          </div>
-        </button>
+          Yes, please!
+        </SubmitButton>
+        <SubmitButton onClick={() => setGoodbye(true)}>No, I'm good.</SubmitButton>
       </div>
     </>
   );

@@ -1,3 +1,4 @@
 import { toast } from "react-toastify";
 
-export const successToast = (msg: string) => toast(<div className="bg-red-700">{msg}</div>);
+export const successToast = (msg: string) => toast.success(msg);
+export const errorToast = (msg: string) => toast.error(msg);

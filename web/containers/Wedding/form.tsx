@@ -5,14 +5,16 @@ import {
   WeddingInfoFragment,
   WeddingQuery,
 } from "@codegen/generated/graphql";
-import DatePicker from "@components/DatePicker";
-import Dot from "@components/Dot";
-import Input from "@components/Input";
-import { successToast } from "@components/Toast";
+import SubmitButton from "@components/Buttons/SubmitButton";
+import DatePicker from "@components/Inputs/DatePicker";
+import Input from "@components/Inputs/Input";
+import { errorToast, successToast } from "@components/Toast";
+import { DATE_TIME_FORMAT } from "@utils/constants";
 import { UserContext } from "@utils/userContext";
-import { parseISO } from "date-fns";
+import { addMonths, format, parseISO, roundToNearestMinutes } from "date-fns";
 import { useFormik } from "formik";
 import { Dispatch, SetStateAction, useContext } from "react";
+import { validationSchema } from "./helpers";
 
 interface Props {
   setShowProfile: Dispatch<SetStateAction<boolean>>;
@@ -21,106 +23,160 @@ interface Props {
 
 const WeddingForm: React.FC<Props> = ({ setShowProfile, wedding }) => {
   const { user } = useContext(UserContext);
-  const [upsertWedding] = useUpsertWeddingMutation();
-  const [invitePartner] = useInvitePartnerMutation();
+  const [upsertWedding, { loading: upsertWeddingLoading }] = useUpsertWeddingMutation();
+  const [invitePartner, { loading: invitePartnerLoading }] = useInvitePartnerMutation();
   const partnersEmail = wedding?.authors.filter((author) => author.id !== user?.id)[0]?.email;
-  const { handleChange, values, handleSubmit, setFieldValue } = useFormik({
+  const {
+    handleChange,
+    values,
+    handleSubmit,
+    setFieldValue,
+    setFieldTouched,
+    errors,
+    touched,
+    handleBlur,
+  } = useFormik({
+    validationSchema,
     initialValues: {
       partner1Name: wedding?.partner1Name || "",
       partner2Name: wedding?.partner2Name || "",
       partnersEmail: partnersEmail || wedding?.partnersEmail || "",
       location: wedding?.location || "",
-      date: wedding?.date ? parseISO(wedding.date) : undefined,
-      rsvpUntil: wedding?.rsvpUntil ? parseISO(wedding.rsvpUntil) : undefined,
+      date: wedding?.date && parseISO(wedding.date),
+      rsvpUntil: wedding?.rsvpUntil && parseISO(wedding.rsvpUntil),
     },
     onSubmit: async (values) => {
-      await upsertWedding({
-        variables: {
-          input: { ...values, id: wedding?.id, date: values.date },
-        },
-        update: (cache, { data }) => {
-          const existingData = cache.readQuery({
-            query: WeddingDocument,
-          }) as WeddingQuery;
-          cache.writeQuery({
-            query: WeddingDocument,
-            data: {
-              wedding: {
-                ...existingData.wedding,
-                ...data?.upsertWedding,
+      try {
+        await upsertWedding({
+          variables: {
+            input: { ...values, id: wedding?.id, date: values.date },
+          },
+          update: (cache, { data }) => {
+            const existingData = cache.readQuery({
+              query: WeddingDocument,
+            }) as WeddingQuery;
+            cache.writeQuery({
+              query: WeddingDocument,
+              data: {
+                wedding: {
+                  ...existingData.wedding,
+                  ...data?.upsertWedding,
+                },
               },
-            },
-          });
-        },
-      });
+            });
+          },
+        });
 
-      if (wedding?.id) {
-        successToast("Wedding updated!");
-        setShowProfile(false);
-      } else {
-        successToast("Wedding created!");
+        if (wedding?.id) {
+          successToast("Wedding updated!");
+          setShowProfile(false);
+        } else {
+          successToast("Wedding created!");
+        }
+      } catch (e) {
+        errorToast("Oops! Something went wrong :(");
       }
     },
   });
 
+  const handleInvitePartner = async (e: any) => {
+    e.preventDefault();
+    try {
+      await invitePartner({ variables: { email: values.partnersEmail } });
+      successToast("Invitation sent!");
+    } catch (e) {
+      errorToast("Oops! Something went wrong :(");
+    }
+  };
+
+  const loading = upsertWeddingLoading || invitePartnerLoading;
+
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <h3 className="font-corsiva text-center mb-4 text-2xl">Please tell us your first names</h3>
+    <form onSubmit={handleSubmit}>
+      <div className="flex flex-col">
+        <label className="font-corsiva text-center mb-2 text-2xl">
+          Please tell us your first names
+        </label>
         <div className="flex justify-evenly">
           <Input
-            fullWidth
             name="partner1Name"
+            placeholder="Julia"
             onChange={handleChange}
+            onBlur={handleBlur}
             value={values.partner1Name}
+            errors={errors}
+            touched={touched}
           />
-          <div className="font-corsiva mx-8 text-xl flex items-center">&</div>
+          <div className="font-corsiva mx-8 mt-2 text-xl">&</div>
           <Input
-            fullWidth
             name="partner2Name"
+            placeholder="John"
             onChange={handleChange}
+            onBlur={handleBlur}
             value={values.partner2Name}
+            errors={errors}
+            touched={touched}
           />
         </div>
-        <h3 className="font-corsiva text-center mt-8 mb-4 text-2xl">
-          Select a date of your Wedding
-        </h3>
-        <DatePicker selected={values.date} onChange={(date) => setFieldValue("date", date)} />
-        <h3 className="font-corsiva text-center mb-4 text-2xl">Location</h3>
+      </div>
+      <Input
+        name="location"
+        label="Location"
+        placeholder="111 8th Avenue, New York, NY"
+        onChange={handleChange}
+        onBlur={handleBlur}
+        value={values.location}
+        errors={errors}
+        touched={touched}
+      />
+      <DatePicker
+        name="date"
+        label="Select a date of your Wedding"
+        placeholderText={format(
+          addMonths(roundToNearestMinutes(new Date(), { nearestTo: 30 }), 6),
+          DATE_TIME_FORMAT
+        )}
+        selected={values.date}
+        setFieldValue={setFieldValue}
+        setFieldTouched={setFieldTouched}
+        onBlur={handleBlur}
+        errors={errors}
+        touched={touched}
+      />
+      <DatePicker
+        name="rsvpUntil"
+        label="Guests can accept or refuse invitation until"
+        placeholderText={format(
+          addMonths(roundToNearestMinutes(new Date(), { nearestTo: 30 }), 3),
+          DATE_TIME_FORMAT
+        )}
+        selected={values.rsvpUntil}
+        setFieldValue={setFieldValue}
+        setFieldTouched={setFieldTouched}
+        onBlur={handleBlur}
+        errors={errors}
+        touched={touched}
+      />
+      <div className="flex items-center">
         <Input
-          className="w-2/3 flex my-0 mx-auto"
-          name="location"
-          onChange={handleChange}
-          value={values.location}
-        />
-        <h3 className="font-corsiva text-center mt-8 mb-4 text-2xl">
-          Guests can accept or refuse invitation until
-        </h3>
-        <DatePicker
-          selected={values.rsvpUntil}
-          onChange={(date) => setFieldValue("rsvpUntil", date)}
-        />
-        <h3 className="font-corsiva text-center mb-4 text-2xl">
-          Do you want to add your partner's email?
-        </h3>
-        <Input
-          className="w-2/3 flex my-0 mx-auto"
           name="partnersEmail"
+          placeholder="john@gmail.com"
+          label="Do you want to add your partner's email?"
           onChange={handleChange}
+          onBlur={handleBlur}
           value={values.partnersEmail}
           disabled={!!partnersEmail}
+          errors={errors}
+          touched={touched}
         />
         {!partnersEmail && (
-          <button
-            className="flex flex-col items-center mx-auto focus:outline-none"
-            onClick={async (e) => {
-              e.preventDefault();
-              await invitePartner({ variables: { email: values.partnersEmail } });
-            }}
-          >
-            Invite partner
-          </button>
+          <SubmitButton disabled={loading} onClick={handleInvitePartner}>
+            Invite
+          </SubmitButton>
         )}
+      </div>
+      <div className="flex items-center">
+        <SubmitButton type="submit" disabled={loading} />
         {wedding && (
           <button
             className="flex flex-col items-center mx-auto focus:outline-none"
@@ -129,24 +185,11 @@ const WeddingForm: React.FC<Props> = ({ setShowProfile, wedding }) => {
               setShowProfile(false);
             }}
           >
-            <span className="font-corsiva text-3xl">Go back</span>
-            <div className="flex">
-              <Dot className="h-1 w-1" />
-              <Dot className="h-1 w-1 mx-2" />
-              <Dot className="h-1 w-1" />
-            </div>
+            Go back
           </button>
         )}
-        <button className="flex flex-col items-center mx-auto focus:outline-none" type="submit">
-          <span className="font-corsiva text-3xl">Proceed</span>
-          <div className="flex">
-            <Dot className="h-1 w-1" />
-            <Dot className="h-1 w-1 mx-2" />
-            <Dot className="h-1 w-1" />
-          </div>
-        </button>
-      </form>
-    </>
+      </div>
+    </form>
   );
 };
 

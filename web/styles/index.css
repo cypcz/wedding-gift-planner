@@ -11,7 +11,7 @@
 
 input::placeholder {
   text-align: center;
-  color: --var(secondary);
+  color: var(--secondary);
 }
 
 .react-datepicker-wrapper {
@@ -20,4 +20,20 @@ input::placeholder {
 
 .react-datepicker__input-container > input {
   width: inherit;
+}
+
+.Toastify__toast {
+  border-radius: 20px;
+  box-shadow: none;
+  border: 1px solid #d6bd7f; /* secondary */
+}
+
+.Toastify__toast--success {
+  background-color: white;
+  color: #373232; /* input */
+}
+
+.Toastify__toast--error {
+  background-color: white;
+  color: #e15f5f; /* error */
 }

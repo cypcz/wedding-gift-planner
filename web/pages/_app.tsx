@@ -11,6 +11,7 @@ import "../styles/index.css";
 export const App = ({ Component, pageProps, router }: AppProps) => {
   const apolloClient = useApollo(pageProps.initialApolloState);
 
+  // All routes except landing page
   if (router.pathname.length > 1) {
     return (
       <ApolloProvider client={apolloClient}>
@@ -33,11 +34,8 @@ export const App = ({ Component, pageProps, router }: AppProps) => {
     );
   }
 
-  return (
-    <ApolloProvider client={apolloClient}>
-      <Component {...pageProps} />
-    </ApolloProvider>
-  );
+  // Landing page
+  return <Component {...pageProps} />;
 };
 
 export default App;

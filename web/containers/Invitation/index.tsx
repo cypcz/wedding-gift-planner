@@ -5,7 +5,10 @@ import {
   useInvitationQuery,
   useRespondToInvitationMutation,
 } from "@codegen/generated/graphql";
+import SubmitButton from "@components/Buttons/SubmitButton";
 import Dot from "@components/Dot";
+import Logo from "@components/Icons/Logo";
+import { DAY_DATE_TIME_FORMAT, Routes } from "@utils/constants";
 import { format, parseISO } from "date-fns";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -17,22 +20,22 @@ const Invitation = () => {
   const [pageStatus, setPageStatus] = useState<PageStatus>("init");
   const id = router.query.id;
   const { data, loading, error } = useInvitationQuery({ variables: { id: id as string } });
-  const [respond] = useRespondToInvitationMutation();
+  const [respond, { loading: respondLoading }] = useRespondToInvitationMutation();
 
   if (loading) {
-    return <>loading..</>;
+    return <Logo className="animate-ping" />;
   }
 
   if (error) {
-    router.replace("/auth");
-    return <></>;
+    router.replace(Routes.AUTH.path);
+    return <Logo className="animate-ping" />;
   }
 
   const invitation = data?.guestInvitation;
 
   if (invitation?.status !== GuestStatus.Waiting) {
-    router.push({ pathname: "/invitation/response", query: router.query });
-    return <></>;
+    router.push({ pathname: Routes.INVITATION_RESPONSE.path, query: router.query });
+    return <Logo className="animate-ping" />;
   }
 
   const handleRespond = async (status: GuestStatus) => {
@@ -56,7 +59,7 @@ const Invitation = () => {
         });
       },
     });
-    await router.push({ pathname: "/invitation/response", query: router.query });
+    await router.push({ pathname: Routes.INVITATION_RESPONSE.path, query: router.query });
   };
 
   const isAccept = pageStatus === "accept";
@@ -71,7 +74,7 @@ const Invitation = () => {
       <h3 className="font-corsiva text-center mb-4 text-2xl">wedding</h3>
       <Dot className="h-1 w-1 mb-4" />
       <h3 className="font-corsiva text-center mb-4 text-2xl">
-        {format(parseISO(invitation?.wedding.date), "EEEE, d MMMM yyyy")}
+        {format(parseISO(invitation?.wedding.date), DAY_DATE_TIME_FORMAT)}
       </h3>
       <h3 className="font-corsiva text-center mb-4 text-2xl">{invitation?.wedding.location}</h3>
       <h3 className="font-corsiva text-center mb-4 text-4xl">
@@ -82,8 +85,8 @@ const Invitation = () => {
           : "You decline the invitation"}
       </h3>
       <div className="flex">
-        <button
-          className="flex flex-col items-center mx-auto focus:outline-none"
+        <SubmitButton
+          disabled={respondLoading}
           onClick={
             isInit
               ? () => setPageStatus("accept")
@@ -93,24 +96,14 @@ const Invitation = () => {
                     : handleRespond(GuestStatus.Declined)
           }
         >
-          <span className="font-corsiva text-3xl">{isInit ? "Accept" : `That's correct`}</span>
-          <div className="flex">
-            <Dot className="h-1 w-1" />
-            <Dot className="h-1 w-1 mx-2" />
-            <Dot className="h-1 w-1" />
-          </div>
-        </button>
-        <button
-          className="flex flex-col items-center mx-auto focus:outline-none"
+          {isInit ? "Accept" : `That's correct`}
+        </SubmitButton>
+        <SubmitButton
+          disabled={respondLoading}
           onClick={isInit ? () => setPageStatus("decline") : () => setPageStatus("init")}
         >
-          <span className="font-corsiva text-3xl">{isInit ? "Decline" : "I made a mistake!"}</span>
-          <div className="flex">
-            <Dot className="h-1 w-1" />
-            <Dot className="h-1 w-1 mx-2" />
-            <Dot className="h-1 w-1" />
-          </div>
-        </button>
+          {isInit ? "Decline" : "I made a mistake!"}
+        </SubmitButton>
       </div>
     </>
   );
