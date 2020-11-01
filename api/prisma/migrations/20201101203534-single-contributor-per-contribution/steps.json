@@ -1,0 +1,63 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "GiftContribution",
+      "field": "contributor",
+      "type": "Guest",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "GiftContribution",
+          "field": "contributor"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "GiftContribution",
+          "field": "contributor"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[contributorId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "GiftContribution",
+          "field": "contributor"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "GiftContribution",
+      "field": "contributorId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "GiftContribution",
+      "field": "contributors"
+    }
+  ]
+}

@@ -15,8 +15,8 @@
     "config:staging": "STAGE=staging ts-node scripts/secrets.ts"
   },
   "dependencies": {
-    "@nexus/schema": "^0.17.0",
-    "@prisma/client": "^2.10.1",
+    "@nexus/schema": "^0.15.0",
+    "@prisma/client": "2.7.0",
     "@sendgrid/mail": "^7.3.0",
     "apollo-server-express": "^2.18.2",
     "cookie-parser": "^1.4.5",
@@ -27,11 +27,11 @@
     "graphql": "^15.4.0",
     "graphql-iso-date": "^3.6.1",
     "helmet": "^4.1.1",
-    "nexus-plugin-prisma": "^0.23.1"
+    "nexus-plugin-prisma": "^0.19.0"
   },
   "devDependencies": {
     "@google-cloud/secret-manager": "^3.2.0",
-    "@prisma/cli": "^2.10.1",
+    "@prisma/cli": "2.7.0",
     "@types/node": "^14.14.6",
     "apollo-server-testing": "^2.18.2",
     "nodemon": "^2.0.6",

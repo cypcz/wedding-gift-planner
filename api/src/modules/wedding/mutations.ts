@@ -35,10 +35,12 @@ export const invitePartner = mutationField("invitePartner", {
       await firebaseAdmin.getUserByEmail(email);
       throw new Error("User already exists!");
     } catch (e) {
-      if (e.errorInfo.code === "auth/user-not-found") {
+      if (e.errorInfo?.code === "auth/user-not-found") {
         const data = encodeInBase64({ weddingId: weddingUser?.wedding?.id, email });
         const link = `${req.headers.origin}/auth?data=${data}`;
         await sendPartnerInvitationEmail(emailClient, email, link);
+      } else {
+        throw new Error("Something went wrong!");
       }
     }
 

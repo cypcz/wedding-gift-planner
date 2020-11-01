@@ -157,7 +157,7 @@ const WeddingForm: React.FC<Props> = ({ setShowProfile, wedding }) => {
         errors={errors}
         touched={touched}
       />
-      <div className="flex items-center">
+      <div className={!partnersEmail ? "flex items-center" : ""}>
         <Input
           name="partnersEmail"
           placeholder="john@gmail.com"

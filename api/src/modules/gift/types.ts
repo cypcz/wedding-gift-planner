@@ -5,7 +5,6 @@ export const Gift = objectType({
   definition(t) {
     t.model.id();
     t.model.name();
-    t.model.name();
     t.model.description();
     t.model.price();
     t.model.currency();
@@ -22,7 +21,7 @@ export const GiftContribution = objectType({
     t.model.amount();
     t.model.currency();
     t.model.note();
-    t.model.contributors();
+    t.model.contributor();
     t.model.gift();
   },
 });
@@ -34,7 +33,7 @@ export const UpsertGiftInput = inputObjectType({
     t.id("weddingId", { required: true });
     t.string("name", { required: true });
     t.string("description");
-    t.int("price", { required: true });
+    t.float("price", { required: true });
     t.field("currency", { type: "Currency", required: true });
     t.string("imgUrl");
     t.string("link");

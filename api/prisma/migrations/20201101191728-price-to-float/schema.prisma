@@ -1,5 +1,5 @@
 datasource postgresql {
-  url      = env("DATABASE_URL")
+  url = "***"
   provider = "postgresql"
 }
 
@@ -69,10 +69,9 @@ model GiftContribution {
   currency Currency
   note     String?
 
-  contributor   Guest  @relation(fields: [contributorId], references: [id])
-  contributorId String
-  gift          Gift   @relation(fields: [giftId], references: [id])
-  giftId        String
+  contributors Guest[]
+  gift         Gift    @relation(fields: [giftId], references: [id])
+  giftId       String
 }
 
 model Gift {

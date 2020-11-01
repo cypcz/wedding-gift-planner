@@ -17,7 +17,7 @@ export type Gift = {
   id: Scalars['String'];
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  price: Scalars['Int'];
+  price: Scalars['Float'];
   currency: Currency;
   link?: Maybe<Scalars['String']>;
   imgUrl?: Maybe<Scalars['String']>;
@@ -38,16 +38,8 @@ export type GiftContribution = {
   amount: Scalars['Int'];
   currency: Currency;
   note?: Maybe<Scalars['String']>;
-  contributors: Array<Guest>;
+  contributor: Guest;
   gift: Gift;
-};
-
-
-export type GiftContributionContributorsArgs = {
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  before?: Maybe<GuestWhereUniqueInput>;
-  after?: Maybe<GuestWhereUniqueInput>;
 };
 
 export type UpsertGiftInput = {
@@ -55,7 +47,7 @@ export type UpsertGiftInput = {
   weddingId: Scalars['ID'];
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  price: Scalars['Int'];
+  price: Scalars['Float'];
   currency: Currency;
   imgUrl?: Maybe<Scalars['String']>;
   link?: Maybe<Scalars['String']>;
@@ -164,10 +156,6 @@ export type GiftContributionWhereUniqueInput = {
   id?: Maybe<Scalars['String']>;
 };
 
-export type GuestWhereUniqueInput = {
-  id?: Maybe<Scalars['String']>;
-};
-
 export enum GuestStatus {
   Waiting = 'WAITING',
   Accepted = 'ACCEPTED',
@@ -176,6 +164,10 @@ export enum GuestStatus {
 
 
 export type GiftWhereUniqueInput = {
+  id?: Maybe<Scalars['String']>;
+};
+
+export type GuestWhereUniqueInput = {
   id?: Maybe<Scalars['String']>;
 };
 
@@ -275,10 +267,10 @@ export type WeddingInfoFragment = (
 export type ContributionInfoFragment = (
   { __typename?: 'GiftContribution' }
   & Pick<GiftContribution, 'id' | 'amount' | 'currency' | 'note'>
-  & { contributors: Array<(
+  & { contributor: (
     { __typename?: 'Guest' }
     & Pick<Guest, 'id' | 'firstName' | 'lastName'>
-  )> }
+  ) }
 );
 
 export type GiftInfoFragment = (
@@ -503,7 +495,7 @@ export const ContributionInfoFragmentDoc = gql`
   amount
   currency
   note
-  contributors {
+  contributor {
     id
     firstName
     lastName

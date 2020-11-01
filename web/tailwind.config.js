@@ -16,6 +16,7 @@ module.exports = {
         bg: "#FAF6F1",
         secondary: "#D6BD7F",
         input: "#373232",
+        success: "#28B446",
         error: "#E15F5F",
       },
       inset: {
@@ -30,7 +31,13 @@ module.exports = {
         12: "12px",
       },
       minWidth: {
+        '1/3': '33%',
         '1/5': '20%'
+      },
+      maxWidth: {
+        '2/3': '1.5rem',
+        5: '5rem',
+        6: '6rem'
       },
       keyframes: {
         dotLoading: {

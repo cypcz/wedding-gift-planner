@@ -12,22 +12,24 @@ const Table: React.FC<Props> = ({ columns, data }) => {
 
   return (
     <table {...getTableProps()}>
-      <thead>
+      <thead className="bg-secondary border-b-1 border-input">
         {headerGroups.map((headerGroup) => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
+          <tr {...headerGroup.getHeaderGroupProps()} className="text-left">
             {headerGroup.headers.map((column) => (
-              <th {...column.getHeaderProps()}>{column.render("header")}</th>
+              <th {...column.getHeaderProps()} className="pl-2 h-12">
+                {column.render("header")}
+              </th>
             ))}
           </tr>
         ))}
       </thead>
-      <tbody {...getTableBodyProps()}>
+      <tbody {...getTableBodyProps()} className="bg-white">
         {rows.map((row) => {
           prepareRow(row);
           return (
-            <tr {...row.getRowProps()}>
+            <tr {...row.getRowProps()} className="border-b-1 border-gray-500 hover:bg-bg">
               {row.cells.map((cell) => (
-                <td className="text-center" {...cell.getCellProps()}>
+                <td className="w-40 h-10 pl-2" {...cell.getCellProps()}>
                   {cell.render("Cell")}
                 </td>
               ))}

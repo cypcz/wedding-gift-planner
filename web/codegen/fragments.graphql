@@ -26,7 +26,7 @@ fragment ContributionInfo on GiftContribution {
   amount
   currency
   note
-  contributors {
+  contributor {
     id
     firstName
     lastName

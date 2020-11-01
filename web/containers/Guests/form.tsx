@@ -2,6 +2,7 @@ import {
   GuestInfoFragment,
   GuestsDocument,
   GuestsQuery,
+  GuestStatus,
   useUpsertGuestMutation,
   WeddingInfoFragment,
 } from "@codegen/generated/graphql";
@@ -89,6 +90,7 @@ const GuestForm: React.FC<Props> = ({ wedding, guest, router }) => {
           value={values.firstName}
           errors={errors}
           touched={touched}
+          className="mr-2"
         />
         <Input
           name="lastName"
@@ -99,17 +101,20 @@ const GuestForm: React.FC<Props> = ({ wedding, guest, router }) => {
           value={values.lastName}
           errors={errors}
           touched={touched}
+          className="ml-2"
         />
       </div>
       <Input
         type="number"
         name="plusX"
         label="How many people can your guest bring?"
-        onChange={handleChange}
+        onChange={(e) => Number(e.target.value) >= 0 && handleChange(e)}
         onBlur={handleBlur}
         value={values.plusX}
         errors={errors}
         touched={touched}
+        disabled={!!(guest && guest.status !== GuestStatus.Waiting)}
+        className="max-w-5 text-center self-center"
       />
       <SubmitButton type="submit" disabled={loading} />
     </form>

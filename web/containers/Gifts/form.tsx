@@ -8,6 +8,7 @@ import {
 } from "@codegen/generated/graphql";
 import SubmitButton from "@components/Buttons/SubmitButton";
 import Input from "@components/Inputs/Input";
+import Select from "@components/Inputs/Select";
 import TextArea from "@components/Inputs/TextArea";
 import { errorToast, successToast } from "@components/Toast";
 import { Routes } from "@utils/constants";
@@ -80,19 +81,11 @@ const GiftForm: React.FC<Props> = ({ wedding, gift, router }) => {
     },
   });
 
+  const disabled = !!gift?.contributions.length;
+
   return (
     <form onSubmit={handleSubmit}>
       <h3 className="font-corsiva text-center mb-4 text-2xl">New Gift</h3>
-      <Input
-        name="link"
-        label="Link"
-        placeholder="https://shop.com/my-lovely-gift"
-        onChange={handleChange}
-        onBlur={handleBlur}
-        value={values.link}
-        errors={errors}
-        touched={touched}
-      />
       <Input
         name="name"
         label="Name"
@@ -114,24 +107,48 @@ const GiftForm: React.FC<Props> = ({ wedding, gift, router }) => {
         errors={errors}
         touched={touched}
       />
+      <div className="flex justify-center">
+        <Input
+          type="number"
+          name="price"
+          label="Price"
+          placeholder="49.50"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.price}
+          errors={errors}
+          touched={touched}
+          disabled={disabled}
+          className="mr-2 max-w-6 text-center"
+        />
+        <Select
+          name="currency"
+          label="Currency"
+          options={Object.values(Currency).map((key) => ({ label: key, value: key }))}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.currency}
+          disabled={disabled}
+          className="ml-2 px-4"
+        />
+      </div>
       <Input
-        type="number"
-        name="price"
-        label="Price"
-        placeholder="49.50"
+        name="link"
+        label="Link"
+        placeholder="https://shop.com/my-lovely-gift"
         onChange={handleChange}
         onBlur={handleBlur}
-        value={values.price}
+        value={values.link}
         errors={errors}
         touched={touched}
       />
       <Input
-        name="currency"
-        label="Currency"
-        placeholder="EUR"
+        name="imgUrl"
+        label="Image"
+        placeholder="https://shop.com/my-lovely-gift/image.png"
         onChange={handleChange}
         onBlur={handleBlur}
-        value={values.currency}
+        value={values.imgUrl}
         errors={errors}
         touched={touched}
       />

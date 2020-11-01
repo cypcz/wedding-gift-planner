@@ -32,7 +32,7 @@ const Layout: React.FC = ({ children }) => {
         <Dot className="h-2 w-2 my-6 mx-12" />
         <Branch transform="scale(-1, 1)" />
       </div>
-      <main className="flex flex-col mt-16 max-w-3/5 min-w-1/5 mx-auto">
+      <main className="flex flex-col mt-16 max-w-3/5 min-w-1/3 mx-auto">
         {loading ? <Logo className="animate-ping" /> : children}
       </main>
       <footer className="flex flex-col mt-16 max-w-3/5 mx-auto">
