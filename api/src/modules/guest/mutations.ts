@@ -11,12 +11,12 @@ export const upsertGuest = mutationField("upsertGuest", {
     return prisma.guest.upsert({
       where: { id: guestId },
       create: {
-        plusX: plusX || undefined,
+        plusX: plusX ?? undefined,
         wedding: { connect: { id: weddingId } },
         firstName,
         lastName,
       },
-      update: { plusX: plusX || undefined, firstName, lastName },
+      update: { plusX: plusX ?? undefined, firstName, lastName },
     });
   },
 });

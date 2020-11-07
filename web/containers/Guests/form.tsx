@@ -36,7 +36,6 @@ const GuestForm: React.FC<Props> = ({ wedding, guest, router }) => {
           variables: {
             input: {
               ...values,
-              plusX: Number(values.plusX),
               weddingId: wedding.id,
               id: guest?.id,
             },
