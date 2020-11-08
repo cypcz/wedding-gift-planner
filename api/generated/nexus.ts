@@ -113,7 +113,9 @@ export interface NexusGenRootTypes {
   Query: {};
   User: { // root type
     email: string; // String!
+    emailVerified: boolean; // Boolean!
     id: string; // String!
+    verificationResendLimit: NexusGenScalars['DateTime']; // DateTime!
   }
   Wedding: { // root type
     date: NexusGenScalars['DateTime']; // DateTime!
@@ -179,10 +181,12 @@ export interface NexusGenFieldTypes {
     login: boolean; // Boolean!
     logout: boolean; // Boolean!
     register: boolean; // Boolean!
+    resendVerificationEmail: boolean; // Boolean!
     respondToInvitation: NexusGenRootTypes['Guest']; // Guest!
     upsertGift: NexusGenRootTypes['Gift']; // Gift!
     upsertGuest: NexusGenRootTypes['Guest']; // Guest!
     upsertWedding: NexusGenRootTypes['Wedding']; // Wedding!
+    verifyEmail: boolean; // Boolean!
   }
   Query: { // field return type
     gift: NexusGenRootTypes['Gift'] | null; // Gift
@@ -195,7 +199,9 @@ export interface NexusGenFieldTypes {
   }
   User: { // field return type
     email: string; // String!
+    emailVerified: boolean; // Boolean!
     id: string; // String!
+    verificationResendLimit: NexusGenScalars['DateTime']; // DateTime!
     wedding: NexusGenRootTypes['Wedding'] | null; // Wedding
   }
   Wedding: { // field return type
@@ -243,6 +249,9 @@ export interface NexusGenArgTypes {
     }
     upsertWedding: { // args
       input: NexusGenInputs['UpsertWeddingInput']; // UpsertWeddingInput!
+    }
+    verifyEmail: { // args
+      email: string; // String!
     }
   }
   Query: {

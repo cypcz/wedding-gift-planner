@@ -77,6 +77,8 @@ export type User = {
   id: Scalars['String'];
   email: Scalars['String'];
   wedding?: Maybe<Wedding>;
+  emailVerified: Scalars['Boolean'];
+  verificationResendLimit: Scalars['DateTime'];
 };
 
 export type RegisterInput = {
@@ -209,6 +211,8 @@ export type Mutation = {
   respondToInvitation: Guest;
   register: Scalars['Boolean'];
   login: Scalars['Boolean'];
+  verifyEmail: Scalars['Boolean'];
+  resendVerificationEmail: Scalars['Boolean'];
   logout: Scalars['Boolean'];
   upsertWedding: Wedding;
   invitePartner: Scalars['Boolean'];
@@ -238,6 +242,11 @@ export type MutationRegisterArgs = {
 
 export type MutationLoginArgs = {
   input: LoginInput;
+};
+
+
+export type MutationVerifyEmailArgs = {
+  email: Scalars['String'];
 };
 
 
@@ -300,6 +309,24 @@ export type RegisterMutationVariables = Exact<{
 export type RegisterMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'register'>
+);
+
+export type VerifyEmailMutationVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type VerifyEmailMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'verifyEmail'>
+);
+
+export type ResendVerificationEmailMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ResendVerificationEmailMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'resendVerificationEmail'>
 );
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
@@ -380,7 +407,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'email'>
+    & Pick<User, 'id' | 'email' | 'emailVerified' | 'verificationResendLimit'>
   )> }
 );
 
@@ -576,6 +603,65 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const VerifyEmailDocument = gql`
+    mutation VerifyEmail($email: String!) {
+  verifyEmail(email: $email)
+}
+    `;
+export type VerifyEmailMutationFn = Apollo.MutationFunction<VerifyEmailMutation, VerifyEmailMutationVariables>;
+
+/**
+ * __useVerifyEmailMutation__
+ *
+ * To run a mutation, you first call `useVerifyEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyEmailMutation, { data, loading, error }] = useVerifyEmailMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useVerifyEmailMutation(baseOptions?: Apollo.MutationHookOptions<VerifyEmailMutation, VerifyEmailMutationVariables>) {
+        return Apollo.useMutation<VerifyEmailMutation, VerifyEmailMutationVariables>(VerifyEmailDocument, baseOptions);
+      }
+export type VerifyEmailMutationHookResult = ReturnType<typeof useVerifyEmailMutation>;
+export type VerifyEmailMutationResult = Apollo.MutationResult<VerifyEmailMutation>;
+export type VerifyEmailMutationOptions = Apollo.BaseMutationOptions<VerifyEmailMutation, VerifyEmailMutationVariables>;
+export const ResendVerificationEmailDocument = gql`
+    mutation ResendVerificationEmail {
+  resendVerificationEmail
+}
+    `;
+export type ResendVerificationEmailMutationFn = Apollo.MutationFunction<ResendVerificationEmailMutation, ResendVerificationEmailMutationVariables>;
+
+/**
+ * __useResendVerificationEmailMutation__
+ *
+ * To run a mutation, you first call `useResendVerificationEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResendVerificationEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resendVerificationEmailMutation, { data, loading, error }] = useResendVerificationEmailMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useResendVerificationEmailMutation(baseOptions?: Apollo.MutationHookOptions<ResendVerificationEmailMutation, ResendVerificationEmailMutationVariables>) {
+        return Apollo.useMutation<ResendVerificationEmailMutation, ResendVerificationEmailMutationVariables>(ResendVerificationEmailDocument, baseOptions);
+      }
+export type ResendVerificationEmailMutationHookResult = ReturnType<typeof useResendVerificationEmailMutation>;
+export type ResendVerificationEmailMutationResult = Apollo.MutationResult<ResendVerificationEmailMutation>;
+export type ResendVerificationEmailMutationOptions = Apollo.BaseMutationOptions<ResendVerificationEmailMutation, ResendVerificationEmailMutationVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout
@@ -770,6 +856,8 @@ export const MeDocument = gql`
   me {
     id
     email
+    emailVerified
+    verificationResendLimit
   }
 }
     `;

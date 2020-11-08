@@ -1,3 +1,4 @@
+import Logo from "@components/Icons/Logo";
 import { Routes } from "@utils/constants";
 import { UserContext } from "@utils/userContext";
 import { useRouter } from "next/router";
@@ -9,7 +10,7 @@ const PublicRoute: React.FC = ({ children }) => {
 
   if (user) {
     router.replace(Routes.WEDDING.path);
-    return <></>;
+    return <Logo className="animate-ping" />;
   }
   return <>{children}</>;
 };

@@ -6,6 +6,8 @@ export const User = objectType({
     t.model.id();
     t.model.email();
     t.model.wedding();
+    t.model.emailVerified();
+    t.model.verificationResendLimit();
   },
 });
 

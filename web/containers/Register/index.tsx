@@ -19,12 +19,12 @@ const Register = () => {
   const router = useRouter();
   const parsedQuery = router.query.data ? JSON.parse(atob(router.query.data as string)) : null;
   const { handleSubmit, handleChange, values, errors, touched, handleBlur } = useFormik({
-    initialValues: { email: parsedQuery.email || "", password: "" },
+    initialValues: { email: parsedQuery?.email || "", password: "" },
     validationSchema,
     onSubmit: async ({ email, password }) => {
       try {
         await registerMutation({
-          variables: { input: { email, password, weddingId: parsedQuery.weddingId } },
+          variables: { input: { email, password, weddingId: parsedQuery?.weddingId } },
         });
       } catch (e) {
         errorToast("Oops! Something went wrong :(");

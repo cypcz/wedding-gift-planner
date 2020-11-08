@@ -6,6 +6,14 @@ mutation Register($input: RegisterInput!) {
   register(input: $input)
 }
 
+mutation VerifyEmail($email: String!) {
+  verifyEmail(email: $email)
+}
+
+mutation ResendVerificationEmail {
+  resendVerificationEmail
+}
+
 mutation Logout {
   logout
 }

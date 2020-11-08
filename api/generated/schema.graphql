@@ -76,10 +76,12 @@ type Mutation {
   login(input: LoginInput!): Boolean!
   logout: Boolean!
   register(input: RegisterInput!): Boolean!
+  resendVerificationEmail: Boolean!
   respondToInvitation(id: ID!, status: GuestStatus!): Guest!
   upsertGift(input: UpsertGiftInput!): Gift!
   upsertGuest(input: UpsertGuestInput!): Guest!
   upsertWedding(input: UpsertWeddingInput!): Wedding!
+  verifyEmail(email: String!): Boolean!
 }
 
 type Query {
@@ -129,7 +131,9 @@ input UpsertWeddingInput {
 
 type User {
   email: String!
+  emailVerified: Boolean!
   id: String!
+  verificationResendLimit: DateTime!
   wedding: Wedding
 }
 

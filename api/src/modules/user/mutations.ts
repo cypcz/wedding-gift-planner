@@ -1,5 +1,5 @@
-import { arg, mutationField } from "@nexus/schema";
-import { sendRegisterEmail } from "../../emails";
+import { arg, mutationField, stringArg } from "@nexus/schema";
+import { sendRegisterEmail, sendVerificationEmail } from "../../emails";
 import { firebaseAdmin } from "../../firebase";
 import { createSessionCookie } from "./utils";
 
@@ -17,7 +17,11 @@ export const register = mutationField("register", {
         wedding: weddingId ? { connect: { id: weddingId } } : undefined,
       },
     });
-    await sendRegisterEmail(emailClient, email);
+    await sendRegisterEmail(
+      emailClient,
+      email,
+      await firebaseAdmin.generateEmailVerificationLink(email)
+    );
     return true;
   },
 });
@@ -42,6 +46,7 @@ export const login = mutationField("login", {
             data: {
               id: decodedToken.uid,
               email: decodedToken.email!,
+              emailVerified: true,
               wedding: weddingId ? { connect: { id: weddingId } } : undefined,
             },
           });
@@ -54,6 +59,44 @@ export const login = mutationField("login", {
     }
     await createSessionCookie({ req, res, idToken, csrfToken });
     return true;
+  },
+});
+
+export const verifyEmail = mutationField("verifyEmail", {
+  type: "Boolean",
+  args: {
+    email: stringArg({ required: true }),
+  },
+  async resolve(_root, { email }, { prisma }) {
+    const updatedUser = await prisma.user.update({
+      where: { email },
+      data: {
+        emailVerified: true,
+      },
+    });
+    await firebaseAdmin.updateUser(updatedUser.id, { emailVerified: true });
+    return true;
+  },
+});
+
+export const resendVerificationEmail = mutationField("resendVerificationEmail", {
+  type: "Boolean",
+  async resolve(_root, _args, { user, prisma, emailClient }) {
+    if (user?.email) {
+      await sendVerificationEmail(
+        emailClient,
+        user.email,
+        await firebaseAdmin.generateEmailVerificationLink(user.email)
+      );
+
+      await prisma.user.update({
+        where: { email: user.email },
+        data: { verificationResendLimit: new Date(new Date().getTime() + 5 * 60000) },
+      });
+      return true;
+    }
+
+    throw new Error("User must be logged in!");
   },
 });
 
