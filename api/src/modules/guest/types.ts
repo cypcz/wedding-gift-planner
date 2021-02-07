@@ -1,4 +1,4 @@
-import { inputObjectType, objectType } from "@nexus/schema";
+import { inputObjectType, objectType } from "nexus";
 
 export const Guest = objectType({
   name: "Guest",
@@ -17,9 +17,9 @@ export const UpsertGuestInput = inputObjectType({
   name: "UpsertGuestInput",
   definition(t) {
     t.id("id");
-    t.id("weddingId", { required: true });
-    t.string("firstName", { required: true });
-    t.string("lastName", { required: true });
+    t.nonNull.id("weddingId");
+    t.nonNull.string("firstName");
+    t.nonNull.string("lastName");
     t.int("plusX");
   },
 });

@@ -3,7 +3,6 @@ import "firebase/auth";
 
 enum Env {
   STAGING = "staging",
-  DEMO = "demo",
   PRODUCTION = "production",
 }
 
@@ -23,8 +22,6 @@ const configs = {
 if (typeof window !== "undefined" && !firebase.apps.length) {
   firebase.initializeApp(configs[process.env.NEXT_PUBLIC_STAGE as Env]);
   if ("measurementId" in configs[process.env.NEXT_PUBLIC_STAGE as Env]) firebase.analytics();
-
-  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
 }
 
 export default firebase;

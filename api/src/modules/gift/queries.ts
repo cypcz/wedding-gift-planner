@@ -1,22 +1,20 @@
-import { idArg, queryField } from "@nexus/schema";
+import { idArg, list, nonNull, nullable, queryField } from "nexus";
 
 export const gifts = queryField("gifts", {
-  type: "Gift",
-  list: true,
+  type: list("Gift"),
   async resolve(_root, _args, { prisma, user }) {
     return prisma.gift.findMany({
-      where: { wedding: { authors: { some: { id: user?.id } } } },
+      where: { wedding: { authors: { some: { id: user?.uid || "" } } } },
     });
   },
 });
 
 export const gift = queryField("gift", {
-  type: "Gift",
-  nullable: true,
+  type: nullable("Gift"),
   args: {
-    id: idArg({ required: true }),
+    id: nonNull(idArg()),
   },
   async resolve(_root, { id }, { prisma }) {
-    return prisma.gift.findOne({ where: { id } });
+    return prisma.gift.findUnique({ where: { id } });
   },
 });

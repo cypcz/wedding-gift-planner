@@ -20,12 +20,12 @@ const GiftPage = () => {
   }, []);
 
   if (weddingLoading || loading) {
-    return <Logo className="animate-ping" />;
+    return <Logo />;
   }
 
   if (!weddingData?.wedding) {
     router.replace(Routes.WEDDING.path);
-    return <Logo className="animate-ping" />;
+    return <Logo />;
   }
 
   return (
@@ -35,7 +35,11 @@ const GiftPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <PrivateRoute>
-        <GiftForm wedding={weddingData.wedding} gift={data?.gift} router={router} />
+        <GiftForm
+          wedding={weddingData.wedding}
+          gift={data?.gift}
+          router={router}
+        />
       </PrivateRoute>
     </>
   );

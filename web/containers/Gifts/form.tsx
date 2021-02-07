@@ -24,7 +24,14 @@ interface Props {
 
 const GiftForm: React.FC<Props> = ({ wedding, gift, router }) => {
   const [upsertGift, { loading }] = useUpsertGiftMutation();
-  const { handleSubmit, handleChange, values, errors, touched, handleBlur } = useFormik({
+  const {
+    handleSubmit,
+    handleChange,
+    values,
+    errors,
+    touched,
+    handleBlur,
+  } = useFormik({
     initialValues: {
       name: gift?.name || "",
       description: gift?.description || "",
@@ -55,7 +62,7 @@ const GiftForm: React.FC<Props> = ({ wedding, gift, router }) => {
             if (existingData) {
               const updatedGifts = gift?.id
                 ? existingData.gifts.map((gift) =>
-                    gift.id === data?.upsertGift.id ? data.upsertGift : gift
+                    gift.id === data?.upsertGift.id ? data.upsertGift : gift,
                   )
                 : [...existingData.gifts, data?.upsertGift];
               cache.writeQuery({
@@ -85,7 +92,7 @@ const GiftForm: React.FC<Props> = ({ wedding, gift, router }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3 className="font-corsiva text-center mb-4 text-2xl">New Gift</h3>
+      <h3>New Gift</h3>
       <Input
         name="name"
         label="Name"
@@ -107,7 +114,7 @@ const GiftForm: React.FC<Props> = ({ wedding, gift, router }) => {
         errors={errors}
         touched={touched}
       />
-      <div className="flex justify-center">
+      <div>
         <Input
           type="number"
           name="price"
@@ -119,17 +126,18 @@ const GiftForm: React.FC<Props> = ({ wedding, gift, router }) => {
           errors={errors}
           touched={touched}
           disabled={disabled}
-          className="mr-2 max-w-6 text-center"
         />
         <Select
           name="currency"
           label="Currency"
-          options={Object.values(Currency).map((key) => ({ label: key, value: key }))}
+          options={Object.values(Currency).map((key) => ({
+            label: key,
+            value: key,
+          }))}
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.currency}
           disabled={disabled}
-          className="ml-2 px-4"
         />
       </div>
       <Input

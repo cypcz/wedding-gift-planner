@@ -1,9 +1,13 @@
-mutation Login($input: LoginInput!) {
-  login(input: $input)
+mutation ProviderRegister {
+  providerRegister {
+    ...MeInfo
+  }
 }
 
 mutation Register($input: RegisterInput!) {
-  register(input: $input)
+  register(input: $input) {
+    id
+  }
 }
 
 mutation VerifyEmail($email: String!) {
@@ -12,10 +16,6 @@ mutation VerifyEmail($email: String!) {
 
 mutation ResendVerificationEmail {
   resendVerificationEmail
-}
-
-mutation Logout {
-  logout
 }
 
 mutation UpsertWedding($input: UpsertWeddingInput!) {

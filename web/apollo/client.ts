@@ -1,15 +1,36 @@
-import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloLink,
+  createHttpLink,
+  InMemoryCache,
+  NormalizedCacheObject,
+} from "@apollo/client";
+import firebase from "@utils/firebase";
+import { setContext } from "apollo-link-context";
 import { useMemo } from "react";
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | undefined;
 
+const authLink = setContext(async () => {
+  let token;
+  if (!(typeof window === "undefined")) {
+    token = await firebase.auth().currentUser?.getIdToken();
+  }
+  return {
+    headers: {
+      authorization: token ? `Bearer ${token}` : "",
+    },
+  };
+});
+
+const httpLink = createHttpLink({
+  uri: process.env.NEXT_PUBLIC_API_URL,
+});
+
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
-    link: new HttpLink({
-      uri: process.env.NEXT_PUBLIC_API_URL, // Server URL (must be absolute)
-      credentials: "include", // Additional fetch() options like `credentials` or `headers`
-    }),
+    link: ApolloLink.from([authLink as any, httpLink]),
     cache: new InMemoryCache(),
   });
 }

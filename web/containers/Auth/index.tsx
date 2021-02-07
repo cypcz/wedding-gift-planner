@@ -1,71 +1,44 @@
-import { useLoginMutation } from "@codegen/generated/graphql";
+import { useProviderRegisterMutation } from "@codegen/generated/graphql";
 import Button from "@components/Buttons/Button";
-import Dot from "@components/Dot";
 import Google from "@components/Icons/Google";
+import { AuthContext } from "@utils/authContext";
 import { Routes } from "@utils/constants";
 import firebase from "@utils/firebase";
-import { UserContext } from "@utils/userContext";
-import { get as getCookie } from "js-cookie";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 
 const Auth = () => {
-  const [login] = useLoginMutation();
-  const { refetchUser } = useContext(UserContext);
+  const { setAuthState } = useContext(AuthContext);
   const router = useRouter();
-
-  const parsedQuery = router.query.data ? JSON.parse(atob(router.query.data as string)) : null;
+  const [providerRegister, { loading }] = useProviderRegisterMutation();
 
   const handleProviderLogin = async (type: "fb" | "google") => {
     const provider =
       type === "fb"
         ? new firebase.auth.FacebookAuthProvider()
         : new firebase.auth.GoogleAuthProvider();
-    let idToken;
-    try {
-      const userCredential = await firebase.auth().signInWithPopup(provider);
-      idToken = await userCredential.user?.getIdToken();
-    } catch (e) {
-      console.log(e);
-    }
-
-    const csrfToken = getCookie("csrfToken");
-
-    if (idToken && csrfToken) {
-      await login({
-        variables: {
-          input: { idToken, csrfToken, isProvider: true, weddingId: parsedQuery?.weddingId },
-        },
-      });
-      await refetchUser();
+    const credential = await firebase.auth().signInWithPopup(provider);
+    if (credential.additionalUserInfo?.isNewUser) {
+      const { data } = await providerRegister();
+      data && setAuthState({ user: data.providerRegister, loading: false });
     }
   };
 
   return (
     <>
-      <h3 className="font-corsiva text-center mt-16 mb-10 text-2xl">
-        {/*         <Branch transform="scale(1, -1)" />
-         */}
-        Please create your account or log in
-      </h3>
+      <h3>Please create your account or log in</h3>
       {!router.query.data && (
-        <Button link href={Routes.LOGIN.path} className="mb-4">
+        <Button link href={Routes.LOGIN.path} disabled={loading}>
           Log in
         </Button>
       )}
-      <Button link href={{ pathname: Routes.REGISTER.path, query: router.query }}>
+      <Button link href={Routes.REGISTER.path} disabled={loading}>
         Create account
       </Button>
-      <Dot className="h-2 w-2 my-6" />
-      <Button className="flex justify-evenly mb-4" onClick={() => handleProviderLogin("google")}>
-        <Google className="w-6 h-6" />
+      <Button onClick={() => handleProviderLogin("google")} disabled={loading}>
+        <Google />
         <span>Log in with Google</span>
       </Button>
-      {/*       <Button className="flex justify-evenly" onClick={() => handleProviderLogin("fb")}>
-        <Facebook className="w-6 h-6" />
-        <span>Log in with Facebook</span>
-      </Button>
-      <Branch transform="scale(-1, 1)" /> */}
     </>
   );
 };

@@ -34,15 +34,13 @@ interface Props {
 const Guests: React.FC<Props> = ({ guests }) => {
   const tableData = guests?.map((guest) => ({
     name: (
-      <div className="flex flex-col">
+      <div>
         <Link href={Routes.GUEST.path.replace(":id", guest.id)}>
           {`${guest.firstName} ${guest.lastName}`}
         </Link>
         <>
           {guest.plusGuests.map((plusGuest, index) => (
-            <span key={index} className="text-xs pl-2">
-              {plusGuest}
-            </span>
+            <span key={index}>{plusGuest}</span>
           ))}
         </>
       </div>
@@ -54,7 +52,7 @@ const Guests: React.FC<Props> = ({ guests }) => {
         text={`${location.origin}/invitation?id=${guest.id}`}
         onCopy={() => successToast("Link copied!")}
       >
-        <div className="cursor-pointer w-6">
+        <div>
           <Copy />
         </div>
       </CopyToClipboard>
@@ -65,21 +63,21 @@ const Guests: React.FC<Props> = ({ guests }) => {
 
   return (
     <>
-      <h3 className="flex font-corsiva justify-center mb-4 text-4xl">Guests</h3>
-      <div className="flex justify-evenly mb-4">
-        <div className="flex flex-col items-center">
+      <h3>Guests</h3>
+      <div>
+        <div>
           <span>Invited</span>
           <span>{guestCounts?.total}</span>
         </div>
-        <div className="flex flex-col items-center">
+        <div>
           <span>Accepted</span>
           <span>{guestCounts?.accepted}</span>
         </div>
-        <div className="flex flex-col items-center">
+        <div>
           <span>Declined</span>
           <span>{guestCounts?.declined}</span>
         </div>
-        <div className="flex flex-col items-center">
+        <div>
           <span>Waiting</span>
           <span>{guestCounts?.waiting}</span>
         </div>

@@ -22,7 +22,14 @@ interface Props {
 
 const GuestForm: React.FC<Props> = ({ wedding, guest, router }) => {
   const [upsertGuest, { loading }] = useUpsertGuestMutation();
-  const { handleSubmit, handleChange, values, errors, touched, handleBlur } = useFormik({
+  const {
+    handleSubmit,
+    handleChange,
+    values,
+    errors,
+    touched,
+    handleBlur,
+  } = useFormik({
     initialValues: {
       firstName: guest?.firstName || "",
       lastName: guest?.lastName || "",
@@ -50,7 +57,9 @@ const GuestForm: React.FC<Props> = ({ wedding, guest, router }) => {
             if (existingData) {
               const updatedGuests = guest?.id
                 ? existingData.guests.map((guest) =>
-                    guest.id === data?.upsertGuest.id ? data.upsertGuest : guest
+                    guest.id === data?.upsertGuest.id
+                      ? data.upsertGuest
+                      : guest,
                   )
                 : [...existingData.guests, data?.upsertGuest];
               cache.writeQuery({
@@ -78,8 +87,8 @@ const GuestForm: React.FC<Props> = ({ wedding, guest, router }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3 className="font-corsiva text-center mb-4 text-2xl">New Guest</h3>
-      <div className="flex justify-evenly">
+      <h3>New Guest</h3>
+      <div>
         <Input
           name="firstName"
           label="First name"
@@ -89,7 +98,6 @@ const GuestForm: React.FC<Props> = ({ wedding, guest, router }) => {
           value={values.firstName}
           errors={errors}
           touched={touched}
-          className="mr-2"
         />
         <Input
           name="lastName"
@@ -100,7 +108,6 @@ const GuestForm: React.FC<Props> = ({ wedding, guest, router }) => {
           value={values.lastName}
           errors={errors}
           touched={touched}
-          className="ml-2"
         />
       </div>
       <Input
@@ -113,7 +120,6 @@ const GuestForm: React.FC<Props> = ({ wedding, guest, router }) => {
         errors={errors}
         touched={touched}
         disabled={!!(guest && guest.status !== GuestStatus.Waiting)}
-        className="max-w-5 text-center self-center"
       />
       <SubmitButton type="submit" disabled={loading} />
     </form>

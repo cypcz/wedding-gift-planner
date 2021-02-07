@@ -1,71 +1,71 @@
-import { arg, mutationField, stringArg } from "@nexus/schema";
+import { arg, mutationField, nonNull, nullable, stringArg } from "nexus";
+import { ApiErrors } from "../../constants";
 import { sendRegisterEmail, sendVerificationEmail } from "../../emails";
 import { firebaseAdmin } from "../../firebase";
-import { createSessionCookie } from "./utils";
 
 export const register = mutationField("register", {
-  type: "Boolean",
+  type: "User",
   args: {
-    input: arg({ type: "RegisterInput", required: true }),
-  },
-  async resolve(_root, { input: { email, password, weddingId } }, { prisma, emailClient }) {
-    const userRecord = await firebaseAdmin.createUser({ email, password });
-    await prisma.user.create({
-      data: {
-        id: userRecord.uid,
-        email,
-        wedding: weddingId ? { connect: { id: weddingId } } : undefined,
-      },
-    });
-    await sendRegisterEmail(
-      emailClient,
-      email,
-      await firebaseAdmin.generateEmailVerificationLink(email)
-    );
-    return true;
-  },
-});
-
-export const login = mutationField("login", {
-  type: "Boolean",
-  args: {
-    input: arg({ type: "LoginInput", required: true }),
+    input: arg({ type: nonNull("RegisterInput") }),
   },
   async resolve(
     _root,
-    { input: { idToken, csrfToken, weddingId, isProvider } },
-    { req, res, prisma, emailClient }
+    { input: { email, password } },
+    { prisma, emailClient },
   ) {
-    if (isProvider) {
-      try {
-        const decodedToken = await firebaseAdmin.verifyIdToken(idToken);
-        const user = await prisma.user.findOne({ where: { id: decodedToken.uid } });
+    try {
+      const userRecord = await firebaseAdmin.createUser({ email, password });
+      const user = await prisma.user.create({
+        data: {
+          id: userRecord.uid,
+          email,
+        },
+      });
+      await sendRegisterEmail(emailClient, email);
+      return user;
+    } catch (e) {
+      if (e.errorInfo?.code === "auth/email-already-exists")
+        throw new Error(ApiErrors.UserAlreadyExists);
 
-        if (!user) {
-          await prisma.user.create({
-            data: {
-              id: decodedToken.uid,
-              email: decodedToken.email!,
-              emailVerified: true,
-              wedding: weddingId ? { connect: { id: weddingId } } : undefined,
-            },
-          });
-          await sendRegisterEmail(emailClient, decodedToken.email!);
-        }
-      } catch (e) {
-        console.error(e);
-        throw new Error();
-      }
+      console.log(e);
+      throw new Error(ApiErrors.Unknown);
     }
-    await createSessionCookie({ req, res, idToken, csrfToken });
-    return true;
+  },
+});
+
+export const providerRegister = mutationField("providerRegister", {
+  type: nullable("User"),
+  async resolve(_root, _args, { user: ctxUser, prisma, emailClient }) {
+    if (!ctxUser?.uid || !ctxUser?.email) return null;
+    try {
+      const existingUser = await prisma.user.findUnique({
+        where: { id: ctxUser.uid },
+      });
+
+      if (!existingUser) {
+        const user = await prisma.user.create({
+          data: {
+            id: ctxUser.uid,
+            email: ctxUser.email,
+            emailVerified: true,
+          },
+        });
+        await sendRegisterEmail(emailClient, ctxUser.email);
+        return user;
+      }
+
+      return null;
+    } catch (e) {
+      console.error(e);
+      throw new Error(ApiErrors.Unknown);
+    }
   },
 });
 
 export const verifyEmail = mutationField("verifyEmail", {
-  type: "Boolean",
+  type: "User",
   args: {
-    email: stringArg({ required: true }),
+    email: nonNull(stringArg()),
   },
   async resolve(_root, { email }, { prisma }) {
     const updatedUser = await prisma.user.update({
@@ -75,35 +75,32 @@ export const verifyEmail = mutationField("verifyEmail", {
       },
     });
     await firebaseAdmin.updateUser(updatedUser.id, { emailVerified: true });
-    return true;
+    return updatedUser;
   },
 });
 
-export const resendVerificationEmail = mutationField("resendVerificationEmail", {
-  type: "Boolean",
-  async resolve(_root, _args, { user, prisma, emailClient }) {
-    if (user?.email) {
-      await sendVerificationEmail(
-        emailClient,
-        user.email,
-        await firebaseAdmin.generateEmailVerificationLink(user.email)
-      );
+export const resendVerificationEmail = mutationField(
+  "resendVerificationEmail",
+  {
+    type: "Boolean",
+    async resolve(_root, _args, { user, prisma, emailClient }) {
+      if (user?.email) {
+        await sendVerificationEmail(
+          emailClient,
+          user.email,
+          await firebaseAdmin.generateEmailVerificationLink(user.email),
+        );
 
-      await prisma.user.update({
-        where: { email: user.email },
-        data: { verificationResendLimit: new Date(new Date().getTime() + 5 * 60000) },
-      });
-      return true;
-    }
+        await prisma.user.update({
+          where: { email: user.email },
+          data: {
+            verificationResendLimit: new Date(new Date().getTime() + 5 * 60000),
+          },
+        });
+        return true;
+      }
 
-    throw new Error("User must be logged in!");
+      throw new Error("User must be logged in!");
+    },
   },
-});
-
-export const logout = mutationField("logout", {
-  type: "Boolean",
-  async resolve(_root, _args, { res }) {
-    res.clearCookie("session");
-    return true;
-  },
-});
+);

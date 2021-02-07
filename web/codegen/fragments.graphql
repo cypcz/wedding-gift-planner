@@ -1,3 +1,10 @@
+fragment MeInfo on User {
+  id
+  email
+  emailVerified
+  verificationResendLimit
+}
+
 fragment GuestInfo on Guest {
   id
   firstName

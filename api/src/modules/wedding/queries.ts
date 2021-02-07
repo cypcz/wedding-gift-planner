@@ -1,13 +1,10 @@
-import { queryField } from "@nexus/schema";
+import { nullable, queryField } from "nexus";
 
 export const wedding = queryField("wedding", {
-  type: "Wedding",
-  nullable: true,
+  type: nullable("Wedding"),
   async resolve(_root, _args, { prisma, user }) {
-    const weddingUser = await prisma.user.findOne({
-      where: { id: user?.id },
-      select: { wedding: true },
+    return prisma.wedding.findFirst({
+      where: { authors: { some: { id: user?.uid } } },
     });
-    return weddingUser?.wedding || null;
   },
 });

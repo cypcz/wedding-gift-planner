@@ -4,7 +4,7 @@ import { Routes } from "@utils/constants";
 const Index = () => {
   return (
     <>
-      <main className="flex justify-center items-center h-screen">
+      <main>
         <BigButton link href={Routes.WEDDING.path}>
           To the App!
         </BigButton>

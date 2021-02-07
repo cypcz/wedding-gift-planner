@@ -1,4 +1,4 @@
-import { inputObjectType, objectType } from "@nexus/schema";
+import { inputObjectType, objectType } from "nexus";
 
 export const Gift = objectType({
   name: "Gift",
@@ -30,11 +30,11 @@ export const UpsertGiftInput = inputObjectType({
   name: "UpsertGiftInput",
   definition(t) {
     t.id("id");
-    t.id("weddingId", { required: true });
-    t.string("name", { required: true });
+    t.nonNull.id("weddingId");
+    t.nonNull.string("name");
     t.string("description");
-    t.float("price", { required: true });
-    t.field("currency", { type: "Currency", required: true });
+    t.nonNull.float("price");
+    t.nonNull.field("currency", { type: "Currency" });
     t.string("imgUrl");
     t.string("link");
   },

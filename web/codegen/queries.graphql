@@ -1,9 +1,6 @@
 query Me {
   me {
-    id
-    email
-    emailVerified
-    verificationResendLimit
+    ...MeInfo
   }
 }
 

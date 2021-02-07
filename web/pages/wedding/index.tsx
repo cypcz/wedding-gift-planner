@@ -8,7 +8,7 @@ const WeddingPage = () => {
   const { data, loading } = useWeddingQuery();
 
   if (loading) {
-    return <Logo className="animate-ping" />;
+    return <Logo />;
   }
 
   return (

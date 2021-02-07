@@ -6,15 +6,17 @@ import { useRouter } from "next/router";
 const InvitationGifts = () => {
   const router = useRouter();
   const id = router.query.id;
-  const { data, loading, error } = useInvitationQuery({ variables: { id: id as string } });
+  const { data, loading, error } = useInvitationQuery({
+    variables: { id: id as string },
+  });
 
   if (loading) {
-    return <Logo className="animate-ping" />;
+    return <Logo />;
   }
 
   if (error) {
     router.replace(Routes.AUTH.path);
-    return <Logo className="animate-ping" />;
+    return <Logo />;
   }
 
   const gifts = data?.guestInvitation?.wedding.gifts;

@@ -1,4 +1,4 @@
-import { inputObjectType, objectType } from "@nexus/schema";
+import { inputObjectType, objectType } from "nexus";
 
 export const Wedding = objectType({
   name: "Wedding",
@@ -20,11 +20,11 @@ export const UpsertWeddingInput = inputObjectType({
   name: "UpsertWeddingInput",
   definition(t) {
     t.id("id");
-    t.string("partner1Name", { required: true });
-    t.string("partner2Name", { required: true });
-    t.string("location", { required: true });
+    t.nonNull.string("partner1Name");
+    t.nonNull.string("partner2Name");
+    t.nonNull.string("location");
     t.string("partnersEmail");
-    t.field("date", { type: "DateTime", required: true });
-    t.field("rsvpUntil", { type: "DateTime", required: true });
+    t.nonNull.field("date", { type: "DateTime" });
+    t.nonNull.field("rsvpUntil", { type: "DateTime" });
   },
 });

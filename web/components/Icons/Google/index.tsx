@@ -1,13 +1,8 @@
-import { HTMLAttributes } from "react";
+interface Props {}
 
-interface Props {
-  className?: HTMLAttributes<HTMLElement>["className"];
-}
-
-const Google: React.FC<Props> = ({ className }) => {
+const Google: React.FC<Props> = ({}) => {
   return (
     <svg
-      className={className}
       version="1.1"
       id="Layer_1"
       xmlns="http://www.w3.org/2000/svg"

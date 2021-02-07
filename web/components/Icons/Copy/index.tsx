@@ -1,10 +1,6 @@
-import { HTMLAttributes } from "react";
+interface Props {}
 
-interface Props {
-  className?: HTMLAttributes<HTMLElement>["className"];
-}
-
-const Copy: React.FC<Props> = ({ className }) => {
+const Copy: React.FC<Props> = ({}) => {
   return (
     <svg
       version="1.1"

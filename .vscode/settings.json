@@ -1,4 +1,8 @@
 {
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+  },
+  "eslint.workingDirectories": ["web", "api"],
   "css.validate": false,
   "less.validate": false,
   "scss.validate": false,

@@ -2,6 +2,8 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -11,6 +13,11 @@ export type Scalars = {
   Float: number;
   DateTime: any;
 };
+
+export enum ApiErrors {
+  UserAlreadyExists = 'UserAlreadyExists',
+  Unknown = 'Unknown'
+}
 
 export type Gift = {
   __typename?: 'Gift';
@@ -84,14 +91,6 @@ export type User = {
 export type RegisterInput = {
   email: Scalars['String'];
   password: Scalars['String'];
-  weddingId?: Maybe<Scalars['String']>;
-};
-
-export type LoginInput = {
-  idToken: Scalars['String'];
-  csrfToken: Scalars['String'];
-  weddingId?: Maybe<Scalars['String']>;
-  isProvider?: Maybe<Scalars['Boolean']>;
 };
 
 export type Wedding = {
@@ -209,11 +208,10 @@ export type Mutation = {
   upsertGift: Gift;
   upsertGuest: Guest;
   respondToInvitation: Guest;
-  register: Scalars['Boolean'];
-  login: Scalars['Boolean'];
+  register: User;
+  providerRegister?: Maybe<User>;
   verifyEmail: Scalars['Boolean'];
   resendVerificationEmail: Scalars['Boolean'];
-  logout: Scalars['Boolean'];
   upsertWedding: Wedding;
   invitePartner: Scalars['Boolean'];
 };
@@ -240,11 +238,6 @@ export type MutationRegisterArgs = {
 };
 
 
-export type MutationLoginArgs = {
-  input: LoginInput;
-};
-
-
 export type MutationVerifyEmailArgs = {
   email: Scalars['String'];
 };
@@ -258,6 +251,11 @@ export type MutationUpsertWeddingArgs = {
 export type MutationInvitePartnerArgs = {
   email: Scalars['String'];
 };
+
+export type MeInfoFragment = (
+  { __typename?: 'User' }
+  & Pick<User, 'id' | 'email' | 'emailVerified' | 'verificationResendLimit'>
+);
 
 export type GuestInfoFragment = (
   { __typename?: 'Guest' }
@@ -291,14 +289,15 @@ export type GiftInfoFragment = (
   )> }
 );
 
-export type LoginMutationVariables = Exact<{
-  input: LoginInput;
-}>;
+export type ProviderRegisterMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LoginMutation = (
+export type ProviderRegisterMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'login'>
+  & { providerRegister?: Maybe<(
+    { __typename?: 'User' }
+    & MeInfoFragment
+  )> }
 );
 
 export type RegisterMutationVariables = Exact<{
@@ -308,7 +307,10 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'register'>
+  & { register: (
+    { __typename?: 'User' }
+    & Pick<User, 'id'>
+  ) }
 );
 
 export type VerifyEmailMutationVariables = Exact<{
@@ -327,14 +329,6 @@ export type ResendVerificationEmailMutationVariables = Exact<{ [key: string]: ne
 export type ResendVerificationEmailMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'resendVerificationEmail'>
-);
-
-export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type LogoutMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'logout'>
 );
 
 export type UpsertWeddingMutationVariables = Exact<{
@@ -407,7 +401,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'email' | 'emailVerified' | 'verificationResendLimit'>
+    & MeInfoFragment
   )> }
 );
 
@@ -491,6 +485,14 @@ export type InvitationQuery = (
   )> }
 );
 
+export const MeInfoFragmentDoc = gql`
+    fragment MeInfo on User {
+  id
+  email
+  emailVerified
+  verificationResendLimit
+}
+    `;
 export const GuestInfoFragmentDoc = gql`
     fragment GuestInfo on Guest {
   id
@@ -543,39 +545,42 @@ export const GiftInfoFragmentDoc = gql`
   }
 }
     ${ContributionInfoFragmentDoc}`;
-export const LoginDocument = gql`
-    mutation Login($input: LoginInput!) {
-  login(input: $input)
+export const ProviderRegisterDocument = gql`
+    mutation ProviderRegister {
+  providerRegister {
+    ...MeInfo
+  }
 }
-    `;
-export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
+    ${MeInfoFragmentDoc}`;
+export type ProviderRegisterMutationFn = Apollo.MutationFunction<ProviderRegisterMutation, ProviderRegisterMutationVariables>;
 
 /**
- * __useLoginMutation__
+ * __useProviderRegisterMutation__
  *
- * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useLoginMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useProviderRegisterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useProviderRegisterMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [loginMutation, { data, loading, error }] = useLoginMutation({
+ * const [providerRegisterMutation, { data, loading, error }] = useProviderRegisterMutation({
  *   variables: {
- *      input: // value for 'input'
  *   },
  * });
  */
-export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
-        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, baseOptions);
+export function useProviderRegisterMutation(baseOptions?: Apollo.MutationHookOptions<ProviderRegisterMutation, ProviderRegisterMutationVariables>) {
+        return Apollo.useMutation<ProviderRegisterMutation, ProviderRegisterMutationVariables>(ProviderRegisterDocument, baseOptions);
       }
-export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
-export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
-export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export type ProviderRegisterMutationHookResult = ReturnType<typeof useProviderRegisterMutation>;
+export type ProviderRegisterMutationResult = Apollo.MutationResult<ProviderRegisterMutation>;
+export type ProviderRegisterMutationOptions = Apollo.BaseMutationOptions<ProviderRegisterMutation, ProviderRegisterMutationVariables>;
 export const RegisterDocument = gql`
     mutation Register($input: RegisterInput!) {
-  register(input: $input)
+  register(input: $input) {
+    id
+  }
 }
     `;
 export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
@@ -662,35 +667,6 @@ export function useResendVerificationEmailMutation(baseOptions?: Apollo.Mutation
 export type ResendVerificationEmailMutationHookResult = ReturnType<typeof useResendVerificationEmailMutation>;
 export type ResendVerificationEmailMutationResult = Apollo.MutationResult<ResendVerificationEmailMutation>;
 export type ResendVerificationEmailMutationOptions = Apollo.BaseMutationOptions<ResendVerificationEmailMutation, ResendVerificationEmailMutationVariables>;
-export const LogoutDocument = gql`
-    mutation Logout {
-  logout
-}
-    `;
-export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
-
-/**
- * __useLogoutMutation__
- *
- * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useLogoutMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
- *   variables: {
- *   },
- * });
- */
-export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
-        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, baseOptions);
-      }
-export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
-export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
-export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const UpsertWeddingDocument = gql`
     mutation UpsertWedding($input: UpsertWeddingInput!) {
   upsertWedding(input: $input) {
@@ -854,13 +830,10 @@ export type RespondToInvitationMutationOptions = Apollo.BaseMutationOptions<Resp
 export const MeDocument = gql`
     query Me {
   me {
-    id
-    email
-    emailVerified
-    verificationResendLimit
+    ...MeInfo
   }
 }
-    `;
+    ${MeInfoFragmentDoc}`;
 
 /**
  * __useMeQuery__
@@ -974,7 +947,7 @@ export const GuestDocument = gql`
  *   },
  * });
  */
-export function useGuestQuery(baseOptions?: Apollo.QueryHookOptions<GuestQuery, GuestQueryVariables>) {
+export function useGuestQuery(baseOptions: Apollo.QueryHookOptions<GuestQuery, GuestQueryVariables>) {
         return Apollo.useQuery<GuestQuery, GuestQueryVariables>(GuestDocument, baseOptions);
       }
 export function useGuestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GuestQuery, GuestQueryVariables>) {
@@ -1039,7 +1012,7 @@ export const GiftDocument = gql`
  *   },
  * });
  */
-export function useGiftQuery(baseOptions?: Apollo.QueryHookOptions<GiftQuery, GiftQueryVariables>) {
+export function useGiftQuery(baseOptions: Apollo.QueryHookOptions<GiftQuery, GiftQueryVariables>) {
         return Apollo.useQuery<GiftQuery, GiftQueryVariables>(GiftDocument, baseOptions);
       }
 export function useGiftLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GiftQuery, GiftQueryVariables>) {
@@ -1093,7 +1066,7 @@ export const InvitationDocument = gql`
  *   },
  * });
  */
-export function useInvitationQuery(baseOptions?: Apollo.QueryHookOptions<InvitationQuery, InvitationQueryVariables>) {
+export function useInvitationQuery(baseOptions: Apollo.QueryHookOptions<InvitationQuery, InvitationQueryVariables>) {
         return Apollo.useQuery<InvitationQuery, InvitationQueryVariables>(InvitationDocument, baseOptions);
       }
 export function useInvitationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InvitationQuery, InvitationQueryVariables>) {

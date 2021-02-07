@@ -1,4 +1,5 @@
 name: STAGING - Build and Deploy Web
+
 on:
   push:
     branches:
@@ -6,6 +7,11 @@ on:
     paths-ignore:
       - api/**
       - .github/workflows/deploy-staging-api.yml
+
+defaults:
+  run:
+    working-directory: web
+
 jobs:
   deploy:
     name: Build and Deploy Staging Web
@@ -13,11 +19,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: amondnet/vercel-action@v19
-        env:
-          CI: false
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }} #Required
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }} #Required
-          vercel-args: "--prod"
-          working-directory: ./web
+          # vercel-args: "--prod"
+          # working-directory: ./web

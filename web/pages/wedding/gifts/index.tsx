@@ -12,12 +12,12 @@ const GiftsPage = () => {
   const { data, loading } = useGiftsQuery();
 
   if (weddingLoading || loading) {
-    return <Logo className="animate-ping" />;
+    return <Logo />;
   }
 
   if (!weddingData?.wedding) {
     router.replace(Routes.WEDDING.path);
-    return <Logo className="animate-ping" />;
+    return <Logo />;
   }
 
   return (

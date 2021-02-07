@@ -4,13 +4,11 @@ import Logo from "@components/Icons/Logo";
 import { errorToast } from "@components/Toast";
 import { Routes } from "@utils/constants";
 import firebase from "@utils/firebase";
-import { UserContext } from "@utils/userContext";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const EmailVerification = () => {
   const router = useRouter();
-  const { refetchUser } = useContext(UserContext);
   const [state, setState] = useState({ loading: true, success: false });
   const [verifyEmail] = useVerifyEmailMutation();
 
@@ -25,9 +23,9 @@ const EmailVerification = () => {
               variables: { email: res.data.email },
             })
               .then(() => {
-                refetchUser().then(() => {
+                /*                 refetchUser().then(() => {
                   setState({ loading: false, success: true });
-                });
+                }); */
               })
               .catch((err) => {
                 console.log(err);
@@ -48,11 +46,11 @@ const EmailVerification = () => {
     }
   }, []);
 
-  if (state.loading) return <Logo className="animate-ping" />;
+  if (state.loading) return <Logo />;
 
   return (
     <>
-      <h3 className="font-corsiva text-center mb-4 text-2xl">
+      <h3>
         {state.success
           ? "Email successfully verified"
           : "Something went wrong. Please continue to the app where you can ask for resending verification email"}

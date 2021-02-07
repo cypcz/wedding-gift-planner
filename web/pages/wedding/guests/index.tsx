@@ -12,12 +12,12 @@ const GuestsPage = () => {
   const { data, loading } = useGuestsQuery();
 
   if (weddingLoading || loading) {
-    return <Logo className="animate-ping" />;
+    return <Logo />;
   }
 
   if (!weddingData?.wedding) {
     router.replace(Routes.WEDDING.path);
-    return <Logo className="animate-ping" />;
+    return <Logo />;
   }
 
   return (

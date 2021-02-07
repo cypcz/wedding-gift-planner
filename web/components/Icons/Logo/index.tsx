@@ -1,10 +1,6 @@
-import { HTMLAttributes } from "react";
+interface Props {}
 
-interface Props {
-  className?: HTMLAttributes<HTMLElement>["className"];
-}
-
-const Logo: React.FC<Props> = ({ className }) => {
+const Logo: React.FC<Props> = ({}) => {
   return (
     <svg
       width="50"
@@ -12,7 +8,6 @@ const Logo: React.FC<Props> = ({ className }) => {
       viewBox="0 0 100 94"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={`mx-auto ${className}`}
     >
       <mask id="path-1-inside-1" fill="white">
         <path

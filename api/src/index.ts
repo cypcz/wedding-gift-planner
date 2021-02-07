@@ -1,40 +1,47 @@
 import sgMail from "@sendgrid/mail";
 import { ApolloServer } from "apollo-server-express";
-import cookieParser from "cookie-parser";
 import express from "express";
 import helmet from "helmet";
 import "../generated/nexus";
-import { __prod__ } from "./constants";
+import { ApiErrors, __prod__ } from "./constants";
 import { createContext } from "./context";
 import { schema } from "./schema";
 import { checkEnvVars } from "./utils";
 
 checkEnvVars();
 
-sgMail.setApiKey(process.env.SG_KEY!);
+sgMail.setApiKey(process.env.SG_KEY as string);
 
 const server = new ApolloServer({
   schema,
   context: async ({ req, res }) => await createContext(req, res, sgMail),
   introspection: !__prod__,
   playground: !__prod__,
+  formatError: (error) => {
+    const errorKey = Object.keys(ApiErrors).find(
+      (key) => ApiErrors[key] === error.message,
+    );
+    if (errorKey && error.extensions) {
+      error.extensions.type = errorKey;
+    }
+    return error;
+  },
 });
 
 const app = express();
-app.use(cookieParser());
 __prod__ && app.use(helmet());
-app.set("trust proxy", 1);
 
 server.applyMiddleware({
   app,
   cors: {
     origin: process.env.FE_URL,
-    credentials: true,
   },
 });
 
 const port = process.env.PORT || 4001;
 
 app.listen({ port }, () =>
-  console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`)
+  console.log(
+    `🚀 Server ready at http://localhost:${port}${server.graphqlPath}`,
+  ),
 );

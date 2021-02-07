@@ -2,6 +2,11 @@
 ### Do not make changes to this file directly
 
 
+enum ApiErrors {
+  Unknown
+  UserAlreadyExists
+}
+
 enum Currency {
   AUD
   CZK
@@ -64,24 +69,16 @@ input GuestWhereUniqueInput {
   id: String
 }
 
-input LoginInput {
-  csrfToken: String!
-  idToken: String!
-  isProvider: Boolean
-  weddingId: String
-}
-
 type Mutation {
   invitePartner(email: String!): Boolean!
-  login(input: LoginInput!): Boolean!
-  logout: Boolean!
-  register(input: RegisterInput!): Boolean!
+  providerRegister: User
+  register(input: RegisterInput!): User!
   resendVerificationEmail: Boolean!
   respondToInvitation(id: ID!, status: GuestStatus!): Guest!
   upsertGift(input: UpsertGiftInput!): Gift!
   upsertGuest(input: UpsertGuestInput!): Guest!
   upsertWedding(input: UpsertWeddingInput!): Wedding!
-  verifyEmail(email: String!): Boolean!
+  verifyEmail(email: String!): User!
 }
 
 type Query {
@@ -97,7 +94,6 @@ type Query {
 input RegisterInput {
   email: String!
   password: String!
-  weddingId: String
 }
 
 input UpsertGiftInput {

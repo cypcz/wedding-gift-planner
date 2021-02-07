@@ -9,15 +9,17 @@ const InvitationResponse = () => {
   const router = useRouter();
   const [isGoodbye, setGoodbye] = useState(false);
   const id = router.query.id;
-  const { data, loading, error } = useInvitationQuery({ variables: { id: id as string } });
+  const { data, loading, error } = useInvitationQuery({
+    variables: { id: id as string },
+  });
 
   if (loading) {
-    return <Logo className="animate-ping" />;
+    return <Logo />;
   }
 
   if (error) {
     router.replace(Routes.AUTH.path);
-    return <Logo className="animate-ping" />;
+    return <Logo />;
   }
 
   const invitation = data?.guestInvitation;
@@ -25,27 +27,35 @@ const InvitationResponse = () => {
 
   return isGoodbye ? (
     <>
-      <h3 className="font-corsiva text-center mb-4 text-2xl">Thank you anyway!</h3>
-      <SubmitButton onClick={() => setGoodbye(false)}>I changed my mind!</SubmitButton>
+      <h3>Thank you anyway!</h3>
+      <SubmitButton onClick={() => setGoodbye(false)}>
+        I changed my mind!
+      </SubmitButton>
     </>
   ) : (
     <>
-      <h3 className="font-corsiva text-center mb-4 text-2xl">
+      <h3>
         You've {isInvitationAccepted ? "accepted" : "declined"} invitation to
       </h3>
-      <h3 className="font-corsiva text-center mb-4 text-2xl">
-        {invitation?.wedding.partner1Name} & {invitation?.wedding.partner2Name}'s wedding
+      <h3>
+        {invitation?.wedding.partner1Name} & {invitation?.wedding.partner2Name}
+        's wedding
       </h3>
-      <h3 className="font-corsiva text-center mb-4 text-2xl">Would you like to send us a gift?</h3>
-      <div className="flex">
+      <h3>Would you like to send us a gift?</h3>
+      <div>
         <SubmitButton
           onClick={() =>
-            router.push({ pathname: Routes.INVITATION_GIFTS.path, query: router.query })
+            router.push({
+              pathname: Routes.INVITATION_GIFTS.path,
+              query: router.query,
+            })
           }
         >
           Yes, please!
         </SubmitButton>
-        <SubmitButton onClick={() => setGoodbye(true)}>No, I'm good.</SubmitButton>
+        <SubmitButton onClick={() => setGoodbye(true)}>
+          No, I'm good.
+        </SubmitButton>
       </div>
     </>
   );

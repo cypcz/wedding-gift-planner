@@ -31,11 +31,11 @@ interface Props {
 const Gifts: React.FC<Props> = ({ gifts }) => {
   const tableData = gifts?.map((gift) => ({
     name: (
-      <div className="flex flex-col">
+      <div>
         <Link href={Routes.GIFT.path.replace(":id", gift.id)}>{gift.name}</Link>
         <>
           {gift.contributions.map((contribution) => (
-            <span key={contribution.id} className="text-xs pl-2">
+            <span key={contribution.id}>
               {`${contribution.contributor.firstName} ${contribution.contributor.lastName}`}
             </span>
           ))}
@@ -44,7 +44,7 @@ const Gifts: React.FC<Props> = ({ gifts }) => {
     ),
     price: `${gift.price} ${gift.currency}`,
     link: gift.link ? (
-      <div className="w-6">
+      <div>
         <a href={gift.link} target="_blank" rel="noopener noreferrer">
           <Copy />
         </a>
@@ -52,12 +52,12 @@ const Gifts: React.FC<Props> = ({ gifts }) => {
     ) : (
       ""
     ),
-    image: gift.imgUrl ? <img src={gift.imgUrl} className="max-w-2/3" /> : "",
+    image: gift.imgUrl ? <img src={gift.imgUrl} /> : "",
   }));
 
   return (
     <>
-      <h3 className="flex font-corsiva justify-center mb-4 text-4xl">Gifts</h3>
+      <h3>Gifts</h3>
       <div>Total gifts: {gifts?.length}</div>
       <Table columns={columns} data={tableData} />
       <BigButton link href={Routes.GIFT_NEW.path}>

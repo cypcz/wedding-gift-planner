@@ -1,13 +1,8 @@
-import { HTMLAttributes } from "react";
+interface Props {}
 
-interface Props {
-  className?: HTMLAttributes<HTMLElement>["className"];
-}
-
-const Facebook: React.FC<Props> = ({ className }) => {
+const Facebook: React.FC<Props> = ({}) => {
   return (
     <svg
-      className={className}
       height="512pt"
       viewBox="0 0 512 512"
       width="512pt"

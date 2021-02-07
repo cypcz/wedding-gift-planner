@@ -11,12 +11,12 @@ const NewGuestPage = () => {
   const { data, loading } = useWeddingQuery();
 
   if (loading) {
-    return <Logo className="animate-ping" />;
+    return <Logo />;
   }
 
   if (!data?.wedding) {
     router.replace(Routes.WEDDING.path);
-    return <Logo className="animate-ping" />;
+    return <Logo />;
   }
 
   return (
