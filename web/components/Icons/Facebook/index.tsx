@@ -1,6 +1,4 @@
-interface Props {}
-
-const Facebook: React.FC<Props> = ({}) => {
+const Facebook: React.FC = () => {
   return (
     <svg
       height="512pt"

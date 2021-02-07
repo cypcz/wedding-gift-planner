@@ -1,6 +1,4 @@
-interface Props {}
-
-const Google: React.FC<Props> = ({}) => {
+const Google: React.FC = () => {
   return (
     <svg
       version="1.1"

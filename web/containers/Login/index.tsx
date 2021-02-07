@@ -59,7 +59,7 @@ const Login = () => {
         <div>Forgot your password?</div>
       </Link>
       <SubmitButton type="submit" disabled={loading} />
-      <div>Oh no! That's not what you wanted?</div>
+      <div>Oh no! That&apos;s not what you wanted?</div>
       <Link href={Routes.AUTH.path}>
         <div>Go back</div>
       </Link>

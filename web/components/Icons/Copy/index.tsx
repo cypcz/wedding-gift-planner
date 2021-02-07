@@ -1,6 +1,4 @@
-interface Props {}
-
-const Copy: React.FC<Props> = ({}) => {
+const Copy: React.FC = () => {
   return (
     <svg
       version="1.1"

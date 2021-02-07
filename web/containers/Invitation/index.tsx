@@ -77,10 +77,10 @@ const Invitation = () => {
 
   return (
     <>
-      <h3>You've been invited to </h3>
+      <h3>You&apos;ve been invited to </h3>
       <h2>
         {invitation?.wedding.partner1Name} & {invitation?.wedding.partner2Name}
-        's
+        &apos;s
       </h2>
       <h3>wedding</h3>
       <h3>

@@ -12,9 +12,6 @@ import { validationSchema } from "./helpers";
 const Register = () => {
   const [registerMutation, { loading }] = useRegisterMutation();
   const router = useRouter();
-  const parsedQuery = router.query.data
-    ? JSON.parse(atob(router.query.data as string))
-    : null;
   const {
     handleSubmit,
     handleChange,
@@ -23,13 +20,13 @@ const Register = () => {
     touched,
     handleBlur,
   } = useFormik({
-    initialValues: { email: parsedQuery?.email || "", password: "" },
+    initialValues: { email: "", password: "" },
     validationSchema,
     onSubmit: async ({ email, password }) => {
       try {
         await registerMutation({
           variables: {
-            input: { email, password, weddingId: parsedQuery?.weddingId },
+            input: { email, password },
           },
         });
       } catch (e) {
@@ -69,7 +66,7 @@ const Register = () => {
         touched={touched}
       />
       <SubmitButton type="submit" disabled={loading} />
-      <div>Oh no! That's not what you wanted?</div>
+      <div>Oh no! That&apos;s not what you wanted?</div>
       <Link href={{ pathname: Routes.AUTH.path, query: router.query }}>
         <div>Go back</div>
       </Link>

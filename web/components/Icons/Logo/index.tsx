@@ -1,6 +1,4 @@
-interface Props {}
-
-const Logo: React.FC<Props> = ({}) => {
+const Logo: React.FC = () => {
   return (
     <svg
       width="50"

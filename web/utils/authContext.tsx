@@ -24,7 +24,7 @@ interface AuthContext {
 export const AuthContext = createContext({
   user: null,
   loading: true,
-  setAuthState: () => {},
+  setAuthState: () => ({}),
 } as AuthContext);
 
 const AuthProvider: React.FC = ({ children }) => {

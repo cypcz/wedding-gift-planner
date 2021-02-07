@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 import { Column, useTable } from "react-table";
 
 interface Props {

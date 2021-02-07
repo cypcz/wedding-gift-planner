@@ -6,7 +6,7 @@
     "start": "NODE_ENV=production dotenv -- node src/index.js",
     "dev": "dotenv -- nodemon",
     "build": "yarn generate && tsc",
-    "lint:all": "eslint 'src/**/*.ts'",
+    "lint:all": "eslint 'src/**/*.ts' --max-warnings 0",
     "generate:prisma": "prisma generate",
     "generate:nexus": "NODE_ENV=development dotenv -- ts-node --transpile-only ./src/schema.ts",
     "generate": "yarn generate:prisma && yarn generate:nexus",

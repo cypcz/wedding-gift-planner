@@ -35,11 +35,12 @@ const InvitationResponse = () => {
   ) : (
     <>
       <h3>
-        You've {isInvitationAccepted ? "accepted" : "declined"} invitation to
+        You&apos;ve {isInvitationAccepted ? "accepted" : "declined"} invitation
+        to
       </h3>
       <h3>
         {invitation?.wedding.partner1Name} & {invitation?.wedding.partner2Name}
-        's wedding
+        &apos;s wedding
       </h3>
       <h3>Would you like to send us a gift?</h3>
       <div>
@@ -54,7 +55,7 @@ const InvitationResponse = () => {
           Yes, please!
         </SubmitButton>
         <SubmitButton onClick={() => setGoodbye(true)}>
-          No, I'm good.
+          No, I&apos;m good.
         </SubmitButton>
       </div>
     </>
