@@ -21,8 +21,10 @@ const configs = {
 
 if (typeof window !== "undefined" && !firebase.apps.length) {
   firebase.initializeApp(configs[process.env.NEXT_PUBLIC_STAGE as Env]);
-  if ("measurementId" in configs[process.env.NEXT_PUBLIC_STAGE as Env])
+  if ("measurementId" in configs[process.env.NEXT_PUBLIC_STAGE as Env]) {
+    require("firebase/analytics");
     firebase.analytics();
+  }
 }
 
 export default firebase;
